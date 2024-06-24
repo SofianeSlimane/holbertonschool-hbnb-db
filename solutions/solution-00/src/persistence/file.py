@@ -13,7 +13,7 @@ class FileRepository(Repository):
     """File Repository"""
 
     __filename = FILE_STORAGE_FILENAME
-    __data: dict[str, list] = {
+    __data: 'dict[str, list]' = {
         "country": [],
         "user": [],
         "amenity": [],
