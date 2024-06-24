@@ -51,7 +51,7 @@ class Base(ABC):
         return repo.get(cls.__name__.lower(), id)
 
     @classmethod
-    def get_all(cls) -> list["Any"]:
+    def get_all(cls) -> 'list["Any"]':
         """
         This is a common method to get all objects of a class
 
@@ -91,5 +91,5 @@ class Base(ABC):
 
     @staticmethod
     @abstractmethod
-    def update(entity_id: str, data: dict) -> Any | None:
+    def update(entity_id: str, data: dict) -> 'Any | None':
         """Updates an object of the class"""

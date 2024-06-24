@@ -22,7 +22,7 @@ class Place(Base):
     number_of_bathrooms: int
     max_guests: int
 
-    def __init__(self, data: dict | None = None, **kw) -> None:
+    def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
         """Dummy init"""
         super().__init__(**kw)
 

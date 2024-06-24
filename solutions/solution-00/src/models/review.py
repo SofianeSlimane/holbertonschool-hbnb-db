@@ -5,7 +5,9 @@ Review related functionality
 from src.models.base import Base
 from src.models.place import Place
 from src.models.user import User
+from src import get_db
 
+db = get_db()
 
 class Review(Base):
     """Review representation"""

@@ -34,7 +34,7 @@ class Country:
         }
 
     @staticmethod
-    def get_all() -> list["Country"]:
+    def get_all() -> 'list["Country"]':
         """Get all countries"""
         from src.persistence import repo
 
