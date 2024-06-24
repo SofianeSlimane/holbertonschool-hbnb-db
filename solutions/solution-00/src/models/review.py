@@ -12,10 +12,10 @@ db = get_db()
 class Review(Base):
     """Review representation"""
 
-    place_id: str
-    user_id: str
-    comment: str
-    rating: float
+    place_id = db.Column(db.String(36), primary_key=False, nullable = False)
+    user_id = db.Column(db.String(36), primary_key=False, nullable = False)
+    comment = db.Column(db.String(36), primary_key=False, nullable = False)
+    rating = db.Column(db.Float(5), primary_key=False, nullable = False, default = 0)
 
     def __init__(
         self, place_id: str, user_id: str, comment: str, rating: float, **kw
