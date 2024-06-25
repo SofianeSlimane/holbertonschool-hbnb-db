@@ -6,9 +6,7 @@ City related functionality
 from src.models.country import Country
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from src.models.my_flask_app import db
-
-
+from flask_app import db, app
 
 class City(db.Model):
     """City representation"""
@@ -17,15 +15,15 @@ class City(db.Model):
     id = db.Column(db.String(36), primary_key=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
-    #name: str
-    #country_code: str
+    name = db.Column(db.String, db.ForeignKey('country.name'))
+    country_code = db.Column(db.String(10), db.ForeignKey('country.code'))
 
-    #def __init__(self, name: str, country_code: str, **kw) -> None:
-        #"""Dummy init"""
-        #super().__init__(**kw)
+    def __init__(self, name: str, country_code: str, **kw) -> None:
+        """Dummy init"""
+        super().__init__(**kw)
 
-        #self.name = name
-        #self.country_code = country_code
+        self.name = name
+        self.country_code = country_code
 
     def __repr__(self) -> str:
         """Dummy repr"""
@@ -52,9 +50,7 @@ class City(db.Model):
             raise ValueError("Country not found")
 
         city = City(**data)
-
         repo.save(city)
-
         return city
 
     @staticmethod
@@ -62,13 +58,14 @@ class City(db.Model):
         """Update an existing city"""
         from src.persistence import repo
 
-        city = City.get(city_id)
-
+        #city = City.get(city_id)
+        city = City.query.filter(City.id == city_id).update(data)
         if not city:
             raise ValueError("City not found")
-
-        for key, value in data.items():
-            setattr(city, key, value)
+            
+        #else:
+            #for key, value in data.items():
+                #setattr(city, key, value)
 
         repo.update(city)
 

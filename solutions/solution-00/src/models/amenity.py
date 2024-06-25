@@ -4,21 +4,21 @@ Amenity related functionality
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 #from src.models.base import Base
-from flask_app import db, app
+from src import db
 
 
 class Amenity(db.Model):
     """Table representation of Amenity"""
-    name = db.Column(db.String(70), nullable=False)
+    name = db.Column(db.String(70), nullable=False, autoo)
     id = db.Column(db.String(36), primary_key=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
     name = db.Column(db.String(50), nullable=False)
-    #def __init__(self, name: str, **kw) -> None:
-        #"""Dummy init"""
-        #super().__init__(**kw)
+    def __init__(self, name: str, **kw) -> None:
+        """Dummy init"""
+        super().__init__(**kw)
 
-        #self.name = name
+        self.name = name
 
     def __repr__(self) -> str:
         return f"<Amenity {self.id} ({self.name})>"
@@ -39,48 +39,44 @@ class Amenity(db.Model):
         
         from src.persistence import repo
 
-        amenity = Amenity(**data)
-        if app.config['USE_DATABASE']:
-            db.session.add(amenity)
-            db.session.commit()
-        else:
-            repo.save(amenity)
-
+        amenity = Amenity(**data)    
+        repo.save(amenity)
         return amenity
 
     @staticmethod
     def update(amenity_id: str, data: dict) -> "Amenity | None":
         """Update an existing amenity"""
         from src.persistence import repo
-        if app.config['USE_DATABASE']:
-            Amenity.query.filter(Amenity.id == amenity_id).update({data})
-            db.session.commit()
-        else:
-            amenity: Amenity | None = Amenity.get(amenity_id)
+    
+        updated_amentity = Amenity.query.filter(Amenity.id == amenity_id).update(data)
 
-            if not amenity:
-                return None
+    
+            #amenity: Amenity | None = Amenity.get(amenity_id)
 
-            if "name" in data:
-                amenity.name = data["name"]
+        if not updated_amentity:
+            return None
+
+            #if "name" in data:
+                #updated_amentity.name = data["name"]
 
         repo.update(amenity)
 
-        return amenity
+        return updated_amentity
 
 
 class PlaceAmenity(db.Model):
     """PlaceAmenity representation"""
 
-    place_id = db.Column(db.String, nullable=False)
-    amenity_id = db.Column(db.String, db.ForeignKey('amenity.id'))
+    place_id = db.Column(db.String, db.ForeignKey("place.id"), nullable=False)
+    amenity_id = db.Column(db.String, db.ForeignKey('amenity.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
+    #def __init__(self, place_id: str, amenity_id: str, **kw) -> None:
+        #"""Dummy init"""
+        #super().__init__(**kw)
 
-    def __init__(self, place_id: str, amenity_id: str, **kw) -> None:
-        """Dummy init"""
-        super().__init__(**kw)
-
-        self.place_id = place_id
-        self.amenity_id = amenity_id
+        #self.place_id = place_id
+        #self.amenity_id = amenity_id
 
     def __repr__(self) -> str:
         """Dummy repr"""
@@ -100,27 +96,26 @@ class PlaceAmenity(db.Model):
     def get(place_id: str, amenity_id: str) -> "PlaceAmenity | None":
         """Get a PlaceAmenity object by place_id and amenity_id"""
         from src.persistence import repo
+        my_place_amenity = Amenity.query.filter(PlaceAmenity.id == amenity_id, PlaceAmenity.place_id == amenity_id).first()
+        return my_place_amenity
+        #place_amenities: list[PlaceAmenity] = repo.get_all("placeamenity")
 
-        place_amenities: list[PlaceAmenity] = repo.get_all("placeamenity")
+        #for place_amenity in place_amenities:
+            #if (
+                #place_amenity.place_id == place_id
+                #and place_amenity.amenity_id == amenity_id
+            #:
+                #return place_amenity
 
-        for place_amenity in place_amenities:
-            if (
-                place_amenity.place_id == place_id
-                and place_amenity.amenity_id == amenity_id
-            ):
-                return place_amenity
-
-        return None
+        #return None
 
     @staticmethod
     def create(data: dict) -> "PlaceAmenity":
         """Create a new PlaceAmenity object"""
         from src.persistence import repo
 
-        new_place_amenity = PlaceAmenity(**data)
-
+        new_place_amenity = PlaceAmenity(**data)    
         repo.save(new_place_amenity)
-
         return new_place_amenity
 
     @staticmethod
@@ -129,10 +124,10 @@ class PlaceAmenity(db.Model):
         from src.persistence import repo
 
         place_amenity = PlaceAmenity.get(place_id, amenity_id)
-
+        
         if not place_amenity:
             return False
-
+        
         repo.delete(place_amenity)
 
         return True
@@ -143,3 +138,15 @@ class PlaceAmenity(db.Model):
         raise NotImplementedError(
             "This method is defined only because of the Base class"
         )
+
+
+
+
+
+
+
+# Testing, will add these to a file later
+
+db.create_all()
+amenity = Amenity("PS5")
+amenity.create
