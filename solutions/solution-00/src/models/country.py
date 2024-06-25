@@ -1,9 +1,11 @@
 """
 Country related functionality
 """
+from src import get_db
+db = get_db()
 
 
-class Country:
+class Country(db.Model):
     """
     Country representation
 
@@ -12,15 +14,15 @@ class Country:
     This class is used to get and list countries
     """
 
-    name: str
-    code: str
-    cities: list
-
-    def __init__(self, name: str, code: str, **kw) -> None:
-        """Dummy init"""
-        super().__init__(**kw)
-        self.name = name
-        self.code = code
+    name = db.Column(db.String(58), unique=True)
+    code = db.Column(db.String(58), unique=True)
+    cities = db.Column(db.String(500), unique=True)
+    id = db.Column(db.String(58), primary_key=True)
+    #def __init__(self, name: str, code: str, **kw) -> None:
+        #"""Dummy init"""
+        #super().__init__(**kw)
+        #self.name = name
+        #self.code = code
 
     def __repr__(self) -> str:
         """Dummy repr"""

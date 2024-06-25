@@ -5,41 +5,44 @@ Place related functionality
 from src.models.base import Base
 from src.models.city import City
 from src.models.user import User
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from src import get_db
+db = get_db()
 
-
-class Place(Base):
+class Place(db.Model):
     """Place representation"""
 
-    name: str
-    description: str
-    address: str
-    latitude: float
-    longitude: float
-    host_id: str
-    city_id: str
-    price_per_night: int
-    number_of_rooms: int
-    number_of_bathrooms: int
-    max_guests: int
+    name = db.Column(db.String(58), unique=True)
+    description = db.Column(db.String(1000), unique=True)
+    address = db.Column(db.String(200))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    host_id = db.Column(db.String(100), db.ForeignKey('user.id'), unique=True)
+    city_id = db.Column(db.String(100), db.ForeignKey('city.id'), unique=True)
+    price_per_night = db.Column(db.Integer)
+    number_of_bathrooms = db.Column(db.Integer)
+    max_guests = db.Column(db.Integer)
+    id = db.Column(db.String(58), primary_key=True)
 
-    def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
-        """Dummy init"""
-        super().__init__(**kw)
+    #def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
+        #"""Dummy init"""
+        #super().__init__(**kw)
 
-        if not data:
-            return
+        #if not data:
+            #return
 
-        self.name = data.get("name", "")
-        self.description = data.get("description", "")
-        self.address = data.get("address", "")
-        self.city_id = data["city_id"]
-        self.latitude = float(data.get("latitude", 0.0))
-        self.longitude = float(data.get("longitude", 0.0))
-        self.host_id = data["host_id"]
-        self.price_per_night = int(data.get("price_per_night", 0))
-        self.number_of_rooms = int(data.get("number_of_rooms", 0))
-        self.number_of_bathrooms = int(data.get("number_of_bathrooms", 0))
-        self.max_guests = int(data.get("max_guests", 0))
+        #self.name = data.get("name", "")
+        #self.description = data.get("description", "")
+        #self.address = data.get("address", "")
+        #self.city_id = data["city_id"]
+        #self.latitude = float(data.get("latitude", 0.0))
+        #self.longitude = float(data.get("longitude", 0.0))
+        #self.host_id = data["host_id"]
+        #self.price_per_night = int(data.get("price_per_night", 0))
+        #self.number_of_rooms = int(data.get("number_of_rooms", 0))
+        #self.number_of_bathrooms = int(data.get("number_of_bathrooms", 0))
+        #self.max_guests = int(data.get("max_guests", 0))
 
     def __repr__(self) -> str:
         """Dummy repr"""

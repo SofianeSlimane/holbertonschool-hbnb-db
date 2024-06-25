@@ -3,22 +3,22 @@ Amenity related functionality
 """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-#from src.models.base import Base
+from src.models.base import Base
 from src import db
 
 
 class Amenity(db.Model):
     """Table representation of Amenity"""
-    name = db.Column(db.String(70), nullable=False, autoo)
+    name = db.Column(db.String(70), nullable=False)
     id = db.Column(db.String(36), primary_key=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
     name = db.Column(db.String(50), nullable=False)
-    def __init__(self, name: str, **kw) -> None:
-        """Dummy init"""
-        super().__init__(**kw)
+    #def __init__(self, name: str, **kw) -> None:
+        #"""Dummy init"""
+        #super().__init__(**kw)
 
-        self.name = name
+        #self.name = name
 
     def __repr__(self) -> str:
         return f"<Amenity {self.id} ({self.name})>"
@@ -34,7 +34,7 @@ class Amenity(db.Model):
         
 
     @staticmethod
-    def create(self, data: dict) -> "Amenity":
+    def create(data: dict) -> "Amenity":
         """Create a new amenity"""
         
         from src.persistence import repo
@@ -59,7 +59,7 @@ class Amenity(db.Model):
             #if "name" in data:
                 #updated_amentity.name = data["name"]
 
-        repo.update(amenity)
+        repo.update(updated_amentity)
 
         return updated_amentity
 
@@ -71,6 +71,7 @@ class PlaceAmenity(db.Model):
     amenity_id = db.Column(db.String, db.ForeignKey('amenity.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
+    id = db.Column(db.String(58), primary_key=True)
     #def __init__(self, place_id: str, amenity_id: str, **kw) -> None:
         #"""Dummy init"""
         #super().__init__(**kw)
@@ -143,10 +144,3 @@ class PlaceAmenity(db.Model):
 
 
 
-
-
-# Testing, will add these to a file later
-
-db.create_all()
-amenity = Amenity("PS5")
-amenity.create

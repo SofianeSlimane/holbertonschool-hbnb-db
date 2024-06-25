@@ -9,24 +9,24 @@ from src import get_db
 
 db = get_db()
 
-class Review(Base):
+class Review(db.Model):
     """Review representation"""
 
-    place_id: str
-    user_id: str
-    comment: str
-    rating: float
+    place_id = db.Column(db.String(58), db.ForeignKey('place.id'), unique=True)
+    user_id = db.Column(db.String(58), db.ForeignKey('user.id'), unique=True)
+    comment = db.Column(db.String(58), unique=True)
+    rating = db.Column(db.String(58), unique=True)
+    id = db.Column(db.String(58), primary_key=True)
+    #def __init__(
+        #self, place_id: str, user_id: str, comment: str, rating: float, **kw
+    #) -> None:
+        #"""Dummy init"""
+        #super().__init__(**kw)
 
-    def __init__(
-        self, place_id: str, user_id: str, comment: str, rating: float, **kw
-    ) -> None:
-        """Dummy init"""
-        super().__init__(**kw)
-
-        self.place_id = place_id
-        self.user_id = user_id
-        self.comment = comment
-        self.rating = rating
+        #self.place_id = place_id
+        #self.user_id = user_id
+        #self.comment = comment
+        #self.rating = rating
 
     def __repr__(self) -> str:
         """Dummy repr"""

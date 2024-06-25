@@ -14,7 +14,8 @@
 
 from src.models.base import Base
 from src.persistence.repository import Repository
-from src import get_db
+from src import get_db, create_app
+from utils.constants import REPOSITORY_ENV_VAR
 db = get_db()
 
 
@@ -30,14 +31,22 @@ class DBRepository(Repository):
 
     def get(self, model_name: str, obj_id: str) -> Base | None:
         """Not implemented"""
+        model_name.get
 
     def reload(self) -> None:
         """Not implemented"""
 
     def save(self, obj) -> None:
         """Not implemented"""
-        db.session.add(obj)
-        db.session.commit()
+        if REPOSITORY_ENV_VAR == "db":
+            db.session.add(obj)
+            db.session.commit()
+        else:
+            from src.persistence.file import FileRepository
+            file_repo = FileRepository()
+            file_repo.save(obj, save_to_file=True)
+
+
 
 
 
@@ -49,3 +58,4 @@ class DBRepository(Repository):
         """Not implemented"""
         db.session.delete(obj)
         return False
+    

@@ -3,21 +3,22 @@ User related functionality
 """
 
 from src.models.base import Base
+from src import get_db
+db = get_db()
 
-
-class User(Base):
+class User(db.Model):
     """User representation"""
 
-    email: str
-    first_name: str
-    last_name: str
-
-    def __init__(self, email: str, first_name: str, last_name: str, **kw):
-        """Dummy init"""
-        super().__init__(**kw)
-        self.email = email
-        self.first_name = first_name
-        self.last_name = last_name
+    email = db.Column(db.String(58), unique=True)
+    first_name = db.Column(db.String(58), unique=True)
+    last_name = db.Column(db.String(58), unique=True)
+    id = db.Column(db.String(58), primary_key=True)
+    #def __init__(self, email: str, first_name: str, last_name: str, **kw):
+        #"""Dummy init"""
+        #super().__init__(**kw)
+        #self.email = email
+        #self.first_name = first_name
+        #self.last_name = last_name
 
     def __repr__(self) -> str:
         """Dummy repr"""
