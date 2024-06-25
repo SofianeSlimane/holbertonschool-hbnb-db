@@ -4,7 +4,7 @@ Amenity related functionality
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 #from src.models.base import Base
-from flask_app import db
+from flask_app import db, app
 
 
 class Amenity(db.Model):
@@ -13,8 +13,7 @@ class Amenity(db.Model):
     id = db.Column(db.String(36), primary_key=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
-
-    #name: str
+    name = db.Column(db.String(50), nullable=False)
     #def __init__(self, name: str, **kw) -> None:
         #"""Dummy init"""
         #super().__init__(**kw)
@@ -35,13 +34,17 @@ class Amenity(db.Model):
         
 
     @staticmethod
-    def create(data: dict) -> "Amenity":
+    def create(self, data: dict) -> "Amenity":
         """Create a new amenity"""
+        
         from src.persistence import repo
 
         amenity = Amenity(**data)
-
-        repo.save(amenity)
+        if app.config['USE_DATABASE']:
+            db.session.add(amenity)
+            db.session.commit()
+        else:
+            repo.save(amenity)
 
         return amenity
 
@@ -49,14 +52,17 @@ class Amenity(db.Model):
     def update(amenity_id: str, data: dict) -> "Amenity | None":
         """Update an existing amenity"""
         from src.persistence import repo
+        if app.config['USE_DATABASE']:
+            Amenity.query.filter(Amenity.id == amenity_id).update({data})
+            db.session.commit()
+        else:
+            amenity: Amenity | None = Amenity.get(amenity_id)
 
-        amenity: Amenity | None = Amenity.get(amenity_id)
+            if not amenity:
+                return None
 
-        if not amenity:
-            return None
-
-        if "name" in data:
-            amenity.name = data["name"]
+            if "name" in data:
+                amenity.name = data["name"]
 
         repo.update(amenity)
 
