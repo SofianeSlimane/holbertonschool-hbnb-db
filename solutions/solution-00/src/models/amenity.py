@@ -72,8 +72,8 @@ class Amenity(db.Model):
 class PlaceAmenity(db.Model):
     """PlaceAmenity representation"""
 
-    place_id: str
-    amenity_id: str
+    place_id = db.Column(db.String, nullable=False)
+    amenity_id = db.Column(db.String, db.ForeignKey('amenity.id'))
 
     def __init__(self, place_id: str, amenity_id: str, **kw) -> None:
         """Dummy init"""
