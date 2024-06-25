@@ -1,23 +1,27 @@
 """
 Amenity related functionality
 """
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+#from src.models.base import Base
+from flask_app import db
 
-from src.models.base import Base
 
+class Amenity(db.Model):
+    """Table representation of Amenity"""
+    name = db.Column(db.String(70), nullable=False)
+    id = db.Column(db.String(36), primary_key=True)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
 
-class Amenity(Base):
-    """Amenity representation"""
+    #name: str
+    #def __init__(self, name: str, **kw) -> None:
+        #"""Dummy init"""
+        #super().__init__(**kw)
 
-    name: str
-
-    def __init__(self, name: str, **kw) -> None:
-        """Dummy init"""
-        super().__init__(**kw)
-
-        self.name = name
+        #self.name = name
 
     def __repr__(self) -> str:
-        """Dummy repr"""
         return f"<Amenity {self.id} ({self.name})>"
 
     def to_dict(self) -> dict:
@@ -28,6 +32,7 @@ class Amenity(Base):
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
+        
 
     @staticmethod
     def create(data: dict) -> "Amenity":
@@ -58,7 +63,7 @@ class Amenity(Base):
         return amenity
 
 
-class PlaceAmenity(Base):
+class PlaceAmenity(db.Model):
     """PlaceAmenity representation"""
 
     place_id: str

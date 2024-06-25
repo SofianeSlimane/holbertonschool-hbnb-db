@@ -2,22 +2,30 @@
 City related functionality
 """
 
-from src.models.base import Base
+#from src.models.base import Base
 from src.models.country import Country
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from src.models.my_flask_app import db
 
 
-class City(Base):
+
+class City(db.Model):
     """City representation"""
+    name = db.Column(db.String(58), unique=True)
+    country_code = db.Column(db.String(58), unique=True)
+    id = db.Column(db.String(36), primary_key=True)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
+    #name: str
+    #country_code: str
 
-    name: str
-    country_code: str
+    #def __init__(self, name: str, country_code: str, **kw) -> None:
+        #"""Dummy init"""
+        #super().__init__(**kw)
 
-    def __init__(self, name: str, country_code: str, **kw) -> None:
-        """Dummy init"""
-        super().__init__(**kw)
-
-        self.name = name
-        self.country_code = country_code
+        #self.name = name
+        #self.country_code = country_code
 
     def __repr__(self) -> str:
         """Dummy repr"""
