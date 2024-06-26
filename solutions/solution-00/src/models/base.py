@@ -5,15 +5,10 @@ from typing import Any, Optional
 import uuid
 from abc import ABC, abstractmethod
 
-
 class Base(ABC):
     """
     Base Interface for all models
     """
-
-    id: str
-    created_at: datetime
-    updated_at: datetime
 
     def __init__(
         self,
@@ -33,6 +28,7 @@ class Base(ABC):
                     continue
                 setattr(self, key, value)
 
+        
         self.id = str(id or uuid.uuid4())
         self.created_at = created_at or datetime.now()
         self.updated_at = updated_at or datetime.now()

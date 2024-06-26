@@ -4,21 +4,23 @@ Amenity related functionality
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from src.models.base import Base
-from src import db
+from src import get_db
+import datetime
+import uuid
+
+db = get_db()
 
 
-class Amenity(db.Model):
+class Amenity(Base):
     """Table representation of Amenity"""
-    name = db.Column(db.String(70), nullable=False)
-    id = db.Column(db.String(36), primary_key=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
-    name = db.Column(db.String(50), nullable=False)
-    #def __init__(self, name: str, **kw) -> None:
-        #"""Dummy init"""
-        #super().__init__(**kw)
+    
+    def __init__(self, name: str, **kw) -> None:
+        """Dummy init"""
 
-        #self.name = name
+        self.name = name
+        self.created_at = str(datetime.datetime.now())
+        self.updated_at = str(datetime.datetime.now())
+        self.id = str(uuid.uuid4())
 
     def __repr__(self) -> str:
         return f"<Amenity {self.id} ({self.name})>"
@@ -28,8 +30,8 @@ class Amenity(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
         }
         
 

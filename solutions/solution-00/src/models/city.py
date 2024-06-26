@@ -7,9 +7,11 @@ from src.models.country import Country
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from src import get_db
+from datetime import datetime
+import uuid
 db = get_db()
 
-class City(db.Model):
+class City(Base):
     """City representation"""
      
     
@@ -19,13 +21,13 @@ class City(db.Model):
     name = db.Column(db.String, db.ForeignKey('country.name'))
     country_code = db.Column(db.String(10), db.ForeignKey('country.code'))
 
-    #def __init__(self, name: str, country_code: str, **kw) -> None:
-        #"""Dummy init"""
-        #super().__init__(**kw)
-
-        #self.name = name
-        #self.country_code = country_code
-
+    def __init__(self, name: str, country_code: str, **kw) -> None:
+        """Dummy init"""
+        self.name = name
+        self.country_code = country_code
+        self.created_at = datetime.now
+        self.update_at = datetime.now
+        self.id = uuid.uuid4()
     def __repr__(self) -> str:
         """Dummy repr"""
         return f"<City {self.id} ({self.name})>"

@@ -7,10 +7,12 @@ from src.models.city import City
 from src.models.user import User
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 from src import get_db
+import uuid
 db = get_db()
 
-class Place(db.Model):
+class Place(Base):
     """Place representation"""
 
     name = db.Column(db.String(58), unique=True)
@@ -23,27 +25,28 @@ class Place(db.Model):
     price_per_night = db.Column(db.Integer)
     number_of_bathrooms = db.Column(db.Integer)
     max_guests = db.Column(db.Integer)
-    id = db.Column(db.String(58), primary_key=True)
+    id = db.Column(db.String(58), primary_key=True )
 
-    #def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
-        #"""Dummy init"""
-        #super().__init__(**kw)
+    def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
+        """Dummy init"""
 
-        #if not data:
-            #return
+        if not data:
+            return
 
-        #self.name = data.get("name", "")
-        #self.description = data.get("description", "")
-        #self.address = data.get("address", "")
-        #self.city_id = data["city_id"]
-        #self.latitude = float(data.get("latitude", 0.0))
-        #self.longitude = float(data.get("longitude", 0.0))
-        #self.host_id = data["host_id"]
-        #self.price_per_night = int(data.get("price_per_night", 0))
-        #self.number_of_rooms = int(data.get("number_of_rooms", 0))
-        #self.number_of_bathrooms = int(data.get("number_of_bathrooms", 0))
-        #self.max_guests = int(data.get("max_guests", 0))
-
+        self.name = data.get("name", "")
+        self.description = data.get("description", "")
+        self.address = data.get("address", "")
+        self.city_id = data["city_id"]
+        self.latitude = float(data.get("latitude", 0.0))
+        self.longitude = float(data.get("longitude", 0.0))
+        self.host_id = data["host_id"]
+        self.price_per_night = int(data.get("price_per_night", 0))
+        self.number_of_rooms = int(data.get("number_of_rooms", 0))
+        self.number_of_bathrooms = int(data.get("number_of_bathrooms", 0))
+        self.max_guests = int(data.get("max_guests", 0))
+        self.created_at = datetime.now
+        self.update_at = datetime.now
+        self.id = uuid.uuid4()
     def __repr__(self) -> str:
         """Dummy repr"""
         return f"<Place {self.id} ({self.name})>"

@@ -5,11 +5,13 @@ Review related functionality
 from src.models.base import Base
 from src.models.place import Place
 from src.models.user import User
+from datetime import datetime
 from src import get_db
+import uuid
 
 db = get_db()
 
-class Review(db.Model):
+class Review(Base):
     """Review representation"""
 
     place_id = db.Column(db.String(58), db.ForeignKey('place.id'), unique=True)
@@ -17,17 +19,18 @@ class Review(db.Model):
     comment = db.Column(db.String(58), unique=True)
     rating = db.Column(db.String(58), unique=True)
     id = db.Column(db.String(58), primary_key=True)
-    #def __init__(
-        #self, place_id: str, user_id: str, comment: str, rating: float, **kw
-    #) -> None:
-        #"""Dummy init"""
-        #super().__init__(**kw)
-
-        #self.place_id = place_id
-        #self.user_id = user_id
-        #self.comment = comment
-        #self.rating = rating
-
+    def __init__(
+        self, place_id: str, user_id: str, comment: str, rating: float, **kw
+    ) -> None:
+        """Dummy init"""
+        
+        self.place_id = place_id
+        self.user_id = user_id
+        self.comment = comment
+        self.rating = rating
+        self.created_at = str(datetime.now)
+        self.update_at = str(datetime.now)
+        self.id = str(uuid.uuid4())
     def __repr__(self) -> str:
         """Dummy repr"""
         return f"<Review {self.id} - '{self.comment[:25]}...'>"
