@@ -3,31 +3,31 @@ City related functionality
 """
 
 from src.models.base import Base
+from src.models.city import City
 from src.models.country import Country
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Mapped, mapped_column
 from src import get_db
-from datetime import datetime
+import datetime
 import uuid
 db = get_db()
 
 class City(Base):
     """City representation"""
-     
+    __tablename__ = "cities"
     
-    id = db.Column(db.String(36), primary_key=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
-    name = db.Column(db.String, db.ForeignKey('country.name'))
-    country_code = db.Column(db.String(10), db.ForeignKey('country.code'))
-
+    name = Mapped[str] = mapped_column(db.String, nullable=False)
+    country_code = Mapped[str] = mapped_column(db.String, nullable=False)
+    
     def __init__(self, name: str, country_code: str, **kw) -> None:
         """Dummy init"""
-        self.name = name
-        self.country_code = country_code
-        self.created_at = datetime.now
-        self.update_at = datetime.now
-        self.id = uuid.uuid4()
+        if len(name) < 1:
+            raise ValueError("Enter valid city name")
+
+        super().__init__(**kw)
+        self.name = db.Column(db.String(64), primary_key=False, nullable = False)
+        self.country_code = db.Column(db.String(36), db.ForeignKey('country.country_code'), primary_key=False, nullable = False)
+    
+    
     def __repr__(self) -> str:
         """Dummy repr"""
         return f"<City {self.id} ({self.name})>"
@@ -38,8 +38,8 @@ class City(Base):
             "id": self.id,
             "name": self.name,
             "country_code": self.country_code,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
         }
 
     @staticmethod
@@ -61,14 +61,9 @@ class City(Base):
         """Update an existing city"""
         from src.persistence import repo
 
-        #city = City.get(city_id)
-        city = City.query.filter(City.id == city_id).update(data)
-        if not city:
-            raise ValueError("City not found")
-            
-        #else:
-            #for key, value in data.items():
-                #setattr(city, key, value)
+        city = City.get(city_id)
+        for key, value in data.items():
+            setattr(city, key, value)
 
         repo.update(city)
 

@@ -3,12 +3,15 @@
 from datetime import datetime
 from typing import Any, Optional
 import uuid
-from abc import ABC, abstractmethod
+from src import get_db
+db = get_db()
 
-class Base(ABC):
+
+class Base:
     """
     Base Interface for all models
     """
+
 
     def __init__(
         self,
@@ -44,7 +47,7 @@ class Base(ABC):
         """
         from src.persistence import repo
 
-        return repo.get(cls.__name__.lower(), id)
+        return repo.get(cls.__name__, id)
 
     @classmethod
     def get_all(cls) -> 'list["Any"]':
@@ -56,7 +59,7 @@ class Base(ABC):
         """
         from src.persistence import repo
 
-        return repo.get_all(cls.__name__.lower())
+        return repo.get_all(cls.__name__)
 
     @classmethod
     def delete(cls, id) -> bool:
@@ -76,16 +79,13 @@ class Base(ABC):
 
         return repo.delete(obj)
 
-    @abstractmethod
     def to_dict(self) -> dict:
         """Returns the dictionary representation of the object"""
 
     @staticmethod
-    @abstractmethod
     def create(data: dict) -> Any:
         """Creates a new object of the class"""
 
     @staticmethod
-    @abstractmethod
     def update(entity_id: str, data: dict) -> 'Any | None':
         """Updates an object of the class"""
