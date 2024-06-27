@@ -13,12 +13,8 @@ from src.models.base import Base  # Import Base class for SQLAlchemy integration
 from typing import List, Optional  # Import List and Optional type hints for type annotations
 from abc import ABC, abstractmethod  # Import ABC and abstractmethod for abstract class functionality
 
-<<<<<<< HEAD
 class Country(Base):
-=======
 
-class Country(Base, ABC):
->>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
     """
     Country representation
 
@@ -28,29 +24,10 @@ class Country(Base, ABC):
     """
     __tablename__ = "countries"  # Define the table name in the database
 
-<<<<<<< HEAD
-    name = db.Column(db.String(58), unique=True)
-    code = db.Column(db.String(58), unique=True)
-    cities = db.Column(db.String(500), unique=True)
-    id = db.Column(db.String(58), primary_key=True)
     def __init__(self, name: str, code: str, **kw) -> None:
         """Dummy init"""
-        self.name = name
-        self.code = code
-        self.created_at = datetime.now
-        self.update_at = datetime.now
-        self.id = uuid.uuid4()
-=======
-    # Define SQLAlchemy columns for name and code
-    name = Column(String(100), primary_key=True)  # Country name as primary key
-    code = Column(String(3), unique=True, nullable=False)  # Country code as unique and not nullable
-
-    def __init__(self, name: str, code: str, **kw) -> None:
-        """Initialize a new Country object with name and code"""
-        super().__init__(**kw)  # Call superclass constructor
-        self.name = name  # Initialize name attribute
-        self.code = code  # Initialize code attribute
->>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
+        self.name = db.Column(db.String(58), unique=True, default=name)
+        self.code = db.Column(db.String(58), unique=True, default=code)
 
     def __repr__(self) -> str:
         """Returns a string representation of the Country object"""
@@ -89,12 +66,6 @@ class Country(Base, ABC):
 
         repo.save(country)  # Save the new country object using repository
 
-<<<<<<< HEAD
-        return country
-    @staticmethod
-    def update(entity_id: str, data: dict) -> Any | None:
-        pass
-=======
         return country  # Return the created country object
 
     @abstractmethod
@@ -112,4 +83,3 @@ class ConcreteCountry(Country):
         """Implementation of the abstract update method"""
         # Add the actual update logic here
         print(f"Updating country {self.name}")
->>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
