@@ -14,7 +14,11 @@ db = get_db()
 class Review(Base):
     __tablename__ = "reviews"
     """Review representation"""
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
     place_id: Mapped[str] = mapped_column(db.String, nullable=False)
     user_id: Mapped[str] = mapped_column(db.String, nullable=False)
     comment: Mapped[str] = mapped_column(db.String, nullable=False)

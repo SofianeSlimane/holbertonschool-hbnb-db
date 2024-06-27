@@ -13,6 +13,10 @@ db = get_db()
 class Place(Base):
     __tablename__ = "places"
     """Place representation"""
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
     name: Mapped[str] = mapped_column(db.String, nullable=False)
     description: Mapped[str] = mapped_column(db.String, nullable=False)
     address: Mapped[str] = mapped_column(db.String, nullable=False)
@@ -42,7 +46,11 @@ class Place(Base):
         self.number_of_rooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_rooms", 0)))
         self.number_of_bathrooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_bathrooms", 0)))
         self.max_guests = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("max_guests", 0)))
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
     def __repr__(self) -> str:
         """Dummy repr"""
         return f"<Place {self.id} ({self.name})>"
