@@ -3,34 +3,13 @@ User related functionality
 """
 
 from src.models.base import Base
-<<<<<<< HEAD
-from src import get_db
-from datetime import datetime
-import uuid
-db = get_db()
-=======
 from sqlalchemy import Column, String, Boolean, DateTime, func
 from typing import Optional, Union, List, Any
 
->>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
 
 class User(Base):
     """User representation"""
 
-<<<<<<< HEAD
-    email = db.Column(db.String(58), unique=True)
-    first_name = db.Column(db.String(58), unique=True)
-    last_name = db.Column(db.String(58), unique=True)
-    id = db.Column(db.String(58), primary_key=True)
-    def __init__(self, email: str, first_name: str, last_name: str, **kw):
-        """Dummy init"""
-        self.email = email
-        self.first_name = first_name
-        self.last_name = last_name
-        self.created_at = str(datetime.now)
-        self.update_at = str(datetime.now)
-        self.id = str(uuid.uuid4())
-=======
     __tablename__ = "users"  # Define the name of the table associated with this model
 
     # Defining columns with SQLAlchemy
@@ -51,7 +30,6 @@ class User(Base):
         self.first_name = first_name  # First name initialization
         self.last_name = last_name  # Surname initialization
 
->>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
     def __repr__(self) -> str:
         """String representation of the User object"""
         return f"<User {self.id} ({self.email})>"
