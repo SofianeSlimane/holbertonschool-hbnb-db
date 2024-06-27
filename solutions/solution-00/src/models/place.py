@@ -5,27 +5,25 @@ Place related functionality
 from src.models.base import Base
 from src.models.city import City
 from src.models.user import User
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from sqlalchemy.orm import Mapped, mapped_column
 from src import get_db
-import uuid
+
 db = get_db()
 
 class Place(Base):
+    __tablename__ = "places"
     """Place representation"""
-
-    name = db.Column(db.String(58), unique=True)
-    description = db.Column(db.String(1000), unique=True)
-    address = db.Column(db.String(200))
-    latitude = db.Column(db.Float)
-    longitude = db.Column(db.Float)
-    host_id = db.Column(db.String(100), db.ForeignKey('user.id'), unique=True)
-    city_id = db.Column(db.String(100), db.ForeignKey('city.id'), unique=True)
-    price_per_night = db.Column(db.Integer)
-    number_of_bathrooms = db.Column(db.Integer)
-    max_guests = db.Column(db.Integer)
-    id = db.Column(db.String(58), primary_key=True )
+    name: Mapped[str] = mapped_column(db.String, nullable=False)
+    description: Mapped[str] = mapped_column(db.String, nullable=False)
+    address: Mapped[str] = mapped_column(db.String, nullable=False)
+    latitude: Mapped[float] = mapped_column(db.Float, nullable=False)
+    longitude: Mapped[float] = mapped_column(db.Float, nullable=False)
+    host_id: Mapped[str] = mapped_column(db.String, nullable=False)
+    city_id: Mapped[str] = mapped_column(db.String, nullable=False)
+    price_per_night: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    number_of_rooms: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    number_of_bathrooms: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    max_guests: Mapped[int] = mapped_column(db.Integer, nullable=False)
 
     def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
         """Dummy init"""
@@ -33,20 +31,18 @@ class Place(Base):
         if not data:
             return
 
-        self.name = data.get("name", "")
-        self.description = data.get("description", "")
-        self.address = data.get("address", "")
-        self.city_id = data["city_id"]
-        self.latitude = float(data.get("latitude", 0.0))
-        self.longitude = float(data.get("longitude", 0.0))
-        self.host_id = data["host_id"]
-        self.price_per_night = int(data.get("price_per_night", 0))
-        self.number_of_rooms = int(data.get("number_of_rooms", 0))
-        self.number_of_bathrooms = int(data.get("number_of_bathrooms", 0))
-        self.max_guests = int(data.get("max_guests", 0))
-        self.created_at = datetime.now
-        self.update_at = datetime.now
-        self.id = uuid.uuid4()
+        self.name = db.Column(db.String(64), primary_key=False, nullable = False, default=data.get("name", ""))
+        self.description = db.Column(db.String(1024), primary_key=False, nullable = False, default=data.get("description", ""))
+        self.address = db.Column(db.String(1024), primary_key=False, nullable = False, default=data.get("address", ""))
+        self.city_id = db.Column(db.String(36), db.ForeignKey('cities.id'), primary_key=False, nullable = False, default=data["city_id"])
+        self.latitude = db.Column(db.Float, primary_key=False, nullable = False, default=float(data.get("latitude", 0.0)))
+        self.longitude = db.Column(db.Float, primary_key=False, nullable = False, default=float(data.get("longitude", 0.0)))
+        self.host_id = db.Column(db.String(36), db.ForeignKey('users.id'), primary_key=False, nullable = False, default=data["host_id"])
+        self.price_per_night = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("price_per_night", 0)))
+        self.number_of_rooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_rooms", 0)))
+        self.number_of_bathrooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_bathrooms", 0)))
+        self.max_guests = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("max_guests", 0)))
+        
     def __repr__(self) -> str:
         """Dummy repr"""
         return f"<Place {self.id} ({self.name})>"

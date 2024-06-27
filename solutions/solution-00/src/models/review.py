@@ -5,32 +5,32 @@ Review related functionality
 from src.models.base import Base
 from src.models.place import Place
 from src.models.user import User
-from datetime import datetime
+from sqlalchemy.orm import Mapped, mapped_column
 from src import get_db
 import uuid
 
 db = get_db()
 
 class Review(Base):
+    __tablename__ = "reviews"
     """Review representation"""
+    
+    place_id: Mapped[str] = mapped_column(db.String, nullable=False)
+    user_id: Mapped[str] = mapped_column(db.String, nullable=False)
+    comment: Mapped[str] = mapped_column(db.String, nullable=False)
+    rating: Mapped[float] = mapped_column(db.Float, nullable=False)
 
-    place_id = db.Column(db.String(58), db.ForeignKey('place.id'), unique=True)
-    user_id = db.Column(db.String(58), db.ForeignKey('user.id'), unique=True)
-    comment = db.Column(db.String(58), unique=True)
-    rating = db.Column(db.String(58), unique=True)
-    id = db.Column(db.String(58), primary_key=True)
     def __init__(
         self, place_id: str, user_id: str, comment: str, rating: float, **kw
     ) -> None:
         """Dummy init"""
-        
-        self.place_id = place_id
-        self.user_id = user_id
-        self.comment = comment
-        self.rating = rating
-        self.created_at = str(datetime.now)
-        self.update_at = str(datetime.now)
-        self.id = str(uuid.uuid4())
+        super().__init__(**kw)
+
+        self.place_id = db.Column(db.String(36), db.ForeignKey('places.id'), primary_key=False, nullable = False, default=place_id)
+        self.user_id = db.Column(db.String(36), db.ForeignKey('users.id'), primary_key=False, nullable = False, default=user_id)
+        self.comment = db.Column(db.String(1024), primary_key=False, nullable = False, default=comment) 
+        self.rating = db.Column(db.Float, primary_key=False, nullable = False, default=rating)
+
     def __repr__(self) -> str:
         """Dummy repr"""
         return f"<Review {self.id} - '{self.comment[:25]}...'>"
