@@ -4,10 +4,11 @@ Country related functionality
 
 from sqlalchemy import Column, String  # Import necessary SQLAlchemy components
 from src.models.base import Base  # Import Base class for SQLAlchemy integration
-from typing import List  # Import List type hint for type annotations
+from typing import List, Optional  # Import List and Optional type hints for type annotations
+from abc import ABC, abstractmethod  # Import ABC and abstractmethod for abstract class functionality
 
 
-class Country(Base):
+class Country(Base, ABC):
     """
     Country representation
 
@@ -15,10 +16,6 @@ class Country(Base):
 
     This class is used to get and list countries
     """
-    name: str  # Define name attribute as a string
-    code: str  # Define code attribute as a string
-    cities: list  # Placeholder for cities attribute (not implemented)
-
     __tablename__ = "countries"  # Define the table name in the database
 
     # Define SQLAlchemy columns for name and code
@@ -26,10 +23,10 @@ class Country(Base):
     code = Column(String(3), unique=True, nullable=False)  # Country code as unique and not nullable
 
     def __init__(self, name: str, code: str, **kw) -> None:
-       """Initialize a new Country object with name and code"""
-       super().__init__(**kw)  # Call superclass constructor
-       self.name = name  # Initialize name attribute
-       self.code = code  # Initialize code attribute
+        """Initialize a new Country object with name and code"""
+        super().__init__(**kw)  # Call superclass constructor
+        self.name = name  # Initialize name attribute
+        self.code = code  # Initialize code attribute
 
     def __repr__(self) -> str:
         """Returns a string representation of the Country object"""
@@ -42,30 +39,46 @@ class Country(Base):
             "code": self.code,
         }
 
-    @staticmethod
-    def get_all() -> List["Country"]:
+    @classmethod
+    def get_all(cls) -> List["Country"]:
         """Get all countries"""
         from src.persistence import repo  # Import repo locally to avoid circular imports
 
-        countries: list["Country"] = repo.get_all("country")  # Get all countries from repository
+        countries: list["Country"] = repo.get_all(cls.__name__.lower())  # Get all countries from repository
 
         return countries  # Return list of Country objects
 
-    @staticmethod
-    def get(code: str) -> "Country | None":
-         """Get a country by its code"""
-         for country in Country.get_all():  # Iterate over all countries
-            if country.code == code:  # Check if country code matches
-                return country  # Return the country object if found
-         return None  # Return None if country with specified code is not found
+    @classmethod
+    def get(cls, code: str) -> Optional["Country"]:
+        """Get a country by its code"""
+        from src.persistence import repo  # Import repo locally to avoid circular imports
+
+        country: Optional["Country"] = repo.get(cls.__name__.lower(), code)  # Get the country by code from repository
+        return country  # Return the country object if found, else None
 
     @staticmethod
     def create(name: str, code: str) -> "Country":
         """Create a new country"""
         from src.persistence import repo  # Import repo locally to avoid circular imports
 
-        country = Country(name, code)  # Create a new Country object
+        country = ConcreteCountry(name, code)  # Create a new ConcreteCountry object
 
         repo.save(country)  # Save the new country object using repository
 
         return country  # Return the created country object
+
+    @abstractmethod
+    def update(self):
+        """Abstract method to update the country"""
+        pass  # This method should be implemented by subclasses
+
+
+class ConcreteCountry(Country):
+    def __init__(self, name: str, code: str, **kw) -> None:
+        """Initialize a new ConcreteCountry object with name and code"""
+        super().__init__(name, code, **kw)  # Call superclass constructor
+
+    def update(self):
+        """Implementation of the abstract update method"""
+        # Add the actual update logic here
+        print(f"Updating country {self.name}")

@@ -4,7 +4,7 @@ User related functionality
 
 from src.models.base import Base
 from sqlalchemy import Column, String, Boolean, DateTime, func
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Any
 
 
 class User(Base):
@@ -20,7 +20,7 @@ class User(Base):
     password = Column(String(128), nullable=False)  # User password
     is_admin = Column(Boolean, default=False)  # Indicator if user is admin
     created_at = Column(DateTime, default=func.current_timestamp())  # creation date and time
-    updated_at = Column(DateTime, onupdate=func.current_timestamp())  # date and time of update
+    updated_at = Column(DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp())  # date and time of update
 
     def __init__(self, email: str, password: str, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw):
         """Initialize a new User"""
@@ -41,8 +41,8 @@ class User(Base):
             "email": self.email,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
 
     @staticmethod
@@ -85,3 +85,15 @@ class User(Base):
         repo.update(user)  # Update user in repository
 
         return user
+
+    @staticmethod
+    def get(user_id: str) -> Optional["User"]:
+        """Retrieve a user by ID"""
+        from src.models.base import Base
+        return Base.get(user_id)
+
+    @staticmethod
+    def get_all() -> List["User"]:
+        """Retrieve all users"""
+        from src.models.base import Base
+        return Base.get_all()

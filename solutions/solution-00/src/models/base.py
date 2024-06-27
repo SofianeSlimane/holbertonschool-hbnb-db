@@ -3,17 +3,23 @@
 from datetime import datetime
 from typing import Any, Optional
 import uuid
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
+from sqlalchemy.orm import Mapped, mapped_column
+from src import get_db
+
+db = get_db()
 
 
-class Base(ABC):
+class Base(db.Model):
+    __metaclass__ = ABCMeta
+    __tablename__ = "Base"
     """
     Base Interface for all models
     """
 
-    id: str
-    created_at: datetime
-    updated_at: datetime
+    id: Mapped[str] = mapped_column(db.String, nullable=False, primary_key=True)
+    created_at: Mapped[str] = mapped_column(db.DateTime, nullable=False)
+    updated_at: Mapped[str] = mapped_column(db.DateTime, nullable=False)
 
     def __init__(
         self,
@@ -33,9 +39,9 @@ class Base(ABC):
                     continue
                 setattr(self, key, value)
 
-        self.id = str(id or uuid.uuid4())
-        self.created_at = created_at or datetime.now()
-        self.updated_at = updated_at or datetime.now()
+        self.id = db.Column(db.String(36), primary_key=True, default=str(id or uuid.uuid4()))
+        self.created_at = db.Column(db.DateTime, primary_key=False, default=created_at or db.func.current_timestamp())
+        self.updated_at = db.Column(db.DateTime, primary_key=False, default=updated_at or db.func.current_timestamp())
 
     @classmethod
     def get(cls, id) -> "Any | None":

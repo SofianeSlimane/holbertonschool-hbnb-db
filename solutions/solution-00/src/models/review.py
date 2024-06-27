@@ -5,17 +5,19 @@ Review related functionality
 from src.models.base import Base
 from src.models.place import Place
 from src.models.user import User
+from sqlalchemy.orm import Mapped, mapped_column
 from src import get_db
 
 db = get_db()
 
 class Review(Base):
+    __tablename__ = "reviews"
     """Review representation"""
 
-    place_id: str
-    user_id: str
-    comment: str
-    rating: float
+    place_id: Mapped[str] = mapped_column(db.String, nullable=False)
+    user_id: Mapped[str] = mapped_column(db.String, nullable=False)
+    comment: Mapped[str] = mapped_column(db.String, nullable=False)
+    rating: Mapped[float] = mapped_column(db.Float, nullable=False)
 
     def __init__(
         self, place_id: str, user_id: str, comment: str, rating: float, **kw
@@ -23,10 +25,10 @@ class Review(Base):
         """Dummy init"""
         super().__init__(**kw)
 
-        self.place_id = place_id
-        self.user_id = user_id
-        self.comment = comment
-        self.rating = rating
+        self.place_id = db.Column(db.String(36), db.ForeignKey('places.id'), primary_key=False, nullable = False, default=place_id)
+        self.user_id = db.Column(db.String(36), db.ForeignKey('users.id'), primary_key=False, nullable = False, default=user_id)
+        self.comment = db.Column(db.String(1024), primary_key=False, nullable = False, default=comment) 
+        self.rating = db.Column(db.Float, primary_key=False, nullable = False, default=rating)
 
     def __repr__(self) -> str:
         """Dummy repr"""
