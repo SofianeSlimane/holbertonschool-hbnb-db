@@ -13,7 +13,6 @@ db = get_db()
 class Place(Base):
     __tablename__ = "places"
     """Place representation"""
-
     name: Mapped[str] = mapped_column(db.String, nullable=False)
     description: Mapped[str] = mapped_column(db.String, nullable=False)
     address: Mapped[str] = mapped_column(db.String, nullable=False)
@@ -28,7 +27,6 @@ class Place(Base):
 
     def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
         """Dummy init"""
-        super().__init__(**kw)
 
         if not data:
             return
@@ -44,7 +42,7 @@ class Place(Base):
         self.number_of_rooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_rooms", 0)))
         self.number_of_bathrooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_bathrooms", 0)))
         self.max_guests = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("max_guests", 0)))
-
+        
     def __repr__(self) -> str:
         """Dummy repr"""
         return f"<Place {self.id} ({self.name})>"

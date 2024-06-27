@@ -7,13 +7,14 @@ from src.models.place import Place
 from src.models.user import User
 from sqlalchemy.orm import Mapped, mapped_column
 from src import get_db
+import uuid
 
 db = get_db()
 
 class Review(Base):
     __tablename__ = "reviews"
     """Review representation"""
-
+    
     place_id: Mapped[str] = mapped_column(db.String, nullable=False)
     user_id: Mapped[str] = mapped_column(db.String, nullable=False)
     comment: Mapped[str] = mapped_column(db.String, nullable=False)

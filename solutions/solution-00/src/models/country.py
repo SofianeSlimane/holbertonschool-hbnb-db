@@ -1,9 +1,15 @@
 """
 Country related functionality
 """
+from typing import Any
+from src import get_db
+from src.models.base import Base
+from datetime import datetime
+import uuid
+db = get_db()
 
 
-class Country:
+class Country(Base):
     """
     Country representation
 
@@ -12,15 +18,17 @@ class Country:
     This class is used to get and list countries
     """
 
-    name: str
-    code: str
-    cities: list
-
+    name = db.Column(db.String(58), unique=True)
+    code = db.Column(db.String(58), unique=True)
+    cities = db.Column(db.String(500), unique=True)
+    id = db.Column(db.String(58), primary_key=True)
     def __init__(self, name: str, code: str, **kw) -> None:
         """Dummy init"""
-        super().__init__(**kw)
         self.name = name
         self.code = code
+        self.created_at = datetime.now
+        self.update_at = datetime.now
+        self.id = uuid.uuid4()
 
     def __repr__(self) -> str:
         """Dummy repr"""
@@ -60,3 +68,6 @@ class Country:
         repo.save(country)
 
         return country
+    @staticmethod
+    def update(entity_id: str, data: dict) -> Any | None:
+        pass
