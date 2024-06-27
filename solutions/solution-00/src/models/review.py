@@ -14,8 +14,8 @@ db = get_db()
 class Review(Base):
     __tablename__ = "reviews"
     """Review representation"""
-    place_id: Mapped[str] = mapped_column(db.String, nullable=False)
-    user_id: Mapped[str] = mapped_column(db.String, nullable=False)
+    target_place_id: Mapped[str] = mapped_column(db.ForeignKey("places.id"), nullable=False, use_existing_column=True)
+    user_id: Mapped[str] = mapped_column(db.ForeignKey("users.id"), nullable=False)
     comment: Mapped[str] = mapped_column(db.String, nullable=False)
     rating: Mapped[float] = mapped_column(db.Float, nullable=False)
 
@@ -25,10 +25,14 @@ class Review(Base):
         """Dummy init"""
         super().__init__(**kw)
 
-        self.place_id = db.Column(db.String(36), db.ForeignKey('places.id'), primary_key=False, nullable = False, default=place_id)
+        self.target_place_id = db.Column(db.String(36), db.ForeignKey('places.id'), primary_key=False, nullable = False, default=place_id)
         self.user_id = db.Column(db.String(36), db.ForeignKey('users.id'), primary_key=False, nullable = False, default=user_id)
         self.comment = db.Column(db.String(1024), primary_key=False, nullable = False, default=comment) 
         self.rating = db.Column(db.Float, primary_key=False, nullable = False, default=rating)
+        __mapper_args__ = {
+            'polymorphic_identity': 'reviews',
+            'polymorphic_on': self.id
+        }
 
     def __repr__(self) -> str:
         """Dummy repr"""
@@ -38,7 +42,7 @@ class Review(Base):
         """Dictionary representation of the object"""
         return {
             "id": self.id,
-            "place_id": self.place_id,
+            "place_id": self.target_place_id,
             "user_id": self.user_id,
             "comment": self.comment,
             "rating": self.rating,

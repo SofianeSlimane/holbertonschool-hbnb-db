@@ -12,8 +12,9 @@ db = get_db()
 
 
 class Amenity(Base):
+    __tablename__ = "amenities"
     """Table representation of Amenity"""
-    name = Mapped[str] = mapped_column(db.String, nullable=False)
+    amentity_name: Mapped[str] = mapped_column(db.String, nullable=False)
     
     
     
@@ -24,16 +25,16 @@ class Amenity(Base):
         if not data:
             return
         
-        self.name = self.name = db.Column(db.String(64), primary_key=False, nullable = False, default=data.get("name", ""))
+        self.amenity_name = db.Column(db.String(64), primary_key=False, nullable = False, default=data.get("name", ""))
 
     def __repr__(self) -> str:
-        return f"<Amenity {self.id} ({self.name})>"
+        return f"<Amenity {self.id} ({self.amenity_name})>"
 
     def to_dict(self) -> dict:
         """Dictionary representation of the object"""
         return {
             "id": self.id,
-            "name": self.name,
+            "name": self.amenity_name,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
@@ -76,7 +77,7 @@ class Amenity(Base):
 
 
 
-class PlaceAmenity(db.Model):
+class PlaceAmenity(Base):
     """PlaceAmenity representation"""
 
     place_id: Mapped[str] = mapped_column(db.String, nullable=False)
@@ -88,7 +89,7 @@ class PlaceAmenity(db.Model):
         if len(place_id) is not 36 and len(amenity_id) is not 36:
             raise ValueError("Enter valid id")
         self.place_id = db.Column(db.String(36), db.ForeignKey('place.id'), primary_key=False, nullable = False)
-        self.amenity_id = db.Column(db.String(36), db.ForeignKey('amenity.id'), primary_key=False, nullable = False)
+        self.amenity_id = db.Column(db.String(36), db.ForeignKey('amenities.id'), primary_key=False, nullable = False)
 
     def __repr__(self) -> str:
         """Dummy repr"""

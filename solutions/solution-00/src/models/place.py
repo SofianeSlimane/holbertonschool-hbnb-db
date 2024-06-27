@@ -14,7 +14,7 @@ class Place(Base):
     __tablename__ = "places"
     """Place representation"""
 
-    name: Mapped[str] = mapped_column(db.String, nullable=False)
+    place_name: Mapped[str] = mapped_column(db.String, nullable=False)
     description: Mapped[str] = mapped_column(db.String, nullable=False)
     address: Mapped[str] = mapped_column(db.String, nullable=False)
     latitude: Mapped[float] = mapped_column(db.Float, nullable=False)
@@ -32,7 +32,7 @@ class Place(Base):
         if not data:
             return
 
-        self.name = db.Column(db.String(64), primary_key=False, nullable = False, default=data.get("name", ""))
+        self.place_name = db.Column(db.String(64), primary_key=False, nullable = False, default=data.get("name", ""))
         self.description = db.Column(db.String(1024), primary_key=False, nullable = False, default=data.get("description", ""))
         self.address = db.Column(db.String(1024), primary_key=False, nullable = False, default=data.get("address", ""))
         self.city_id = db.Column(db.String(36), db.ForeignKey('cities.id'), primary_key=False, nullable = False, default=data["city_id"])
@@ -43,16 +43,20 @@ class Place(Base):
         self.number_of_rooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_rooms", 0)))
         self.number_of_bathrooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_bathrooms", 0)))
         self.max_guests = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("max_guests", 0)))
+        __mapper_args__ = {
+            'polymorphic_identity': 'places',
+            'polymorphic_on': self.id
+        }
 
     def __repr__(self) -> str:
         """Dummy repr"""
-        return f"<Place {self.id} ({self.name})>"
+        return f"<Place {self.id} ({self.place_name})>"
 
     def to_dict(self) -> dict:
         """Dictionary representation of the object"""
         return {
             "id": self.id,
-            "name": self.name,
+            "name": self.place_name,
             "description": self.description,
             "address": self.address,
             "latitude": self.latitude,

@@ -9,18 +9,14 @@ from typing import Optional, Union, List, Any
 
 class User(Base):
     """User representation"""
-
     __tablename__ = "users"  # Define the name of the table associated with this model
 
     # Defining columns with SQLAlchemy
-    id = Column(String(36), primary_key=True)  # Unique identifier
     first_name = Column(String(50), nullable=True)  # User's first name
     last_name = Column(String(50), nullable=True)  # User's last name
     email = Column(String(120), unique=True, nullable=False)  # Unique email address
     password = Column(String(128), nullable=False)  # User password
     is_admin = Column(Boolean, default=False)  # Indicator if user is admin
-    created_at = Column(DateTime, default=func.current_timestamp())  # creation date and time
-    updated_at = Column(DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp())  # date and time of update
 
     def __init__(self, email: str, password: str, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw):
         """Initialize a new User"""
@@ -29,6 +25,10 @@ class User(Base):
         self.password = password  # Initialize password
         self.first_name = first_name  # First name initialization
         self.last_name = last_name  # Surname initialization
+        __mapper_args__ = {
+            'polymorphic_identity': 'users',
+            'polymorphic_on': self.id
+        }
 
     def __repr__(self) -> str:
         """String representation of the User object"""

@@ -12,7 +12,7 @@ db = get_db()
 
 class Base(db.Model):
     __metaclass__ = ABCMeta
-    __tablename__ = "Base"
+    __tablename__ = "base"
     """
     Base Interface for all models
     """
@@ -42,6 +42,10 @@ class Base(db.Model):
         self.id = db.Column(db.String(36), primary_key=True, default=str(id or uuid.uuid4()))
         self.created_at = db.Column(db.DateTime, primary_key=False, default=created_at or db.func.current_timestamp())
         self.updated_at = db.Column(db.DateTime, primary_key=False, default=updated_at or db.func.current_timestamp())
+        __mapper_args__ = {
+            'polymorphic_identity': 'base',
+            'polymorphic_on': self.id
+        }
 
     @classmethod
     def get(cls, id) -> "Any | None":

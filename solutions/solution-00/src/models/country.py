@@ -26,17 +26,21 @@ class Country(Base):
 
     def __init__(self, name: str, code: str, **kw) -> None:
         """Dummy init"""
-        self.name = db.Column(db.String(58), unique=True, default=name)
+        self.country_name = db.Column(db.String(58), unique=True, default=name)
         self.code = db.Column(db.String(58), unique=True, default=code)
+        __mapper_args__ = {
+            'polymorphic_identity': 'countries',
+            'polymorphic_on': self.code
+        }
 
     def __repr__(self) -> str:
         """Returns a string representation of the Country object"""
-        return f"<Country {self.code} ({self.name})>"  # Return string representation of Country object
+        return f"<Country {self.code} ({self.country_name})>"  # Return string representation of Country object
 
     def to_dict(self) -> dict:
         """Returns the dictionary representation of the country"""
         return {
-            "name": self.name,
+            "name": self.country_name,
             "code": self.code,
         }
 
@@ -82,4 +86,4 @@ class ConcreteCountry(Country):
     def update(self):
         """Implementation of the abstract update method"""
         # Add the actual update logic here
-        print(f"Updating country {self.name}")
+        print(f"Updating country {self.country_name}")
