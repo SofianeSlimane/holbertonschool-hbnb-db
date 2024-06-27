@@ -1,11 +1,9 @@
-""" Implement the User Management Endpoints """
-
 import requests
 import uuid
 
 from tests import test_functions
 
-API_URL = "http://localhost:5000"
+API_URL = "http://127.0.0.1:5000/"
 
 
 def create_unique_user():
@@ -18,6 +16,7 @@ def create_unique_user():
         "email": unique_email,
         "first_name": "Test",
         "last_name": "User",
+        "password": "password123"
     }
     response = requests.post(f"{API_URL}/users", json=new_user)
     assert (
@@ -52,6 +51,7 @@ def test_post_user():
         "email": unique_email,
         "first_name": "John",
         "last_name": "Doe",
+        "password": "password123"
     }
     response = requests.post(f"{API_URL}/users", json=new_user)
     assert (
@@ -110,6 +110,7 @@ def test_put_user():
         "email": f"updated.user.{uuid.uuid4()}@example.com",
         "first_name": "John",
         "last_name": "Smith",
+        "password": "newpassword123"
     }
     response = requests.put(f"{API_URL}/users/{user_id}", json=updated_user)
     assert (
