@@ -43,6 +43,8 @@ class DevelopmentConfig(Config):
         "DATABASE_URL", "sqlite:///hbnb_dev.db")
     DEBUG = True
 
+    USE_DATABASE = True
+
 
 class TestingConfig(Config):
     """
