@@ -3,11 +3,13 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
 cors = CORS()
 
 def create_app(config_class="src.config.DevelopmentConfig") -> Flask:
     global db
+    global bcrypt
     """
     Create a Flask app with the given configuration class.
     The default configuration class is DevelopmentConfig.
@@ -16,18 +18,18 @@ def create_app(config_class="src.config.DevelopmentConfig") -> Flask:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///development.db'
     db = SQLAlchemy(app)
     app.url_map.strict_slashes = False
-
     app.config.from_object(config_class)
-
+    app.config['JWT_SECRET_KEY'] = 'super-secret'
     register_extensions(app)
     register_routes(app)
     register_handlers(app)
-
+    jwt = JWTManager(app)
+    with app.app_context():
+        db.create_all()
     return app
 
 def get_db():
     return db
-
 
 def register_extensions(app: Flask) -> None:
     """Register the extensions for the Flask app"""

@@ -1,6 +1,6 @@
 """ Abstract base class for all models """
-
 from datetime import datetime
+import datetime
 from typing import Any, Optional
 import uuid
 from abc import ABCMeta, abstractmethod
@@ -13,6 +13,7 @@ db = get_db()
 class Base(db.Model):
     __metaclass__ = ABCMeta
     __tablename__ = "base"
+    __abstract__ = True
     """
     Base Interface for all models
     """
@@ -23,9 +24,9 @@ class Base(db.Model):
 
     def __init__(
         self,
-        id: Optional[str] = None,
-        created_at: Optional[datetime] = None,
-        updated_at: Optional[datetime] = None,
+        id = uuid.uuid4(),
+        created_at = str(datetime.datetime.now()),
+        updated_at = str(datetime.datetime.now()),
         **kwargs,
     ) -> None:
         """

@@ -16,9 +16,9 @@ from src.models.base import Base
 from src.persistence.repository import Repository
 from src import get_db, create_app
 from utils.constants import REPOSITORY_ENV_VAR
+from src import create_app
+import os
 db = get_db()
-
-
 class DBRepository(Repository):
     """Dummy DB repository"""
     
@@ -27,7 +27,7 @@ class DBRepository(Repository):
 
     def get_all(self, model_name: str) -> list:
         """Not implemented"""
-        return []
+        
 
     def get(self, model_name: str, obj_id: str) -> Base | None:
         """Not implemented"""
@@ -38,13 +38,10 @@ class DBRepository(Repository):
 
     def save(self, obj) -> None:
         """Not implemented"""
-        if REPOSITORY_ENV_VAR == "db":
-            db.session.add(obj)
-            db.session.commit()
-        else:
-            from src.persistence.file import FileRepository
-            file_repo = FileRepository()
-            file_repo.save(obj, save_to_file=True)
+        
+        db.session.add(obj)
+        db.session.commit()
+        
 
 
 

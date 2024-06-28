@@ -3,32 +3,34 @@ User related functionality
 """
 
 from src.models.base import Base
-from sqlalchemy import Column, String, Boolean, DateTime, func
 from typing import Optional, Union, List, Any
-
-
+from flask_bcrypt import Bcrypt
+from sqlalchemy.orm import Mapped, mapped_column
+from src import get_db
+import datetime
+import uuid
+db = get_db()
+bcrypt = Bcrypt()
 class User(Base):
     """User representation"""
-    __tablename__ = "users"  # Define the name of the table associated with this model
-
-    # Defining columns with SQLAlchemy
-    first_name = Column(String(50), nullable=True)  # User's first name
-    last_name = Column(String(50), nullable=True)  # User's last name
-    email = Column(String(120), unique=True, nullable=False)  # Unique email address
-    password = Column(String(128), nullable=False)  # User password
-    is_admin = Column(Boolean, default=False)  # Indicator if user is admin
-
+    __tablename__ = "users"  
+    
+    first_name: Mapped[str] = mapped_column(db.String, nullable=False)  
+    last_name: Mapped[str] = mapped_column(db.String, nullable=False)
+    email: Mapped[str] = mapped_column(db.String, nullable=False)
+    password: Mapped[str] = mapped_column(db.String, nullable=False)
+    is_admin: Mapped[bool] = mapped_column(db.String, nullable=False)
+    id: Mapped[str] = mapped_column(db.String, primary_key=True)
     def __init__(self, email: str, password: str, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw):
         """Initialize a new User"""
-        super().__init__(**kw)  # Calling the parent class constructor
-        self.email = email  # Email initialization
-        self.password = password  # Initialize password
-        self.first_name = first_name  # First name initialization
-        self.last_name = last_name  # Surname initialization
-        __mapper_args__ = {
-            'polymorphic_identity': 'users',
-            'polymorphic_on': self.id
-        }
+        self.email = email
+        self.password = password
+        self.first_name = first_name
+        self.last_name = last_name
+        self.created_at = datetime.datetime.now()
+        self.updated_at = datetime.datetime.now()
+        self.id = str(uuid.uuid4())
+        self.is_admin = False
 
     def __repr__(self) -> str:
         """String representation of the User object"""
@@ -37,28 +39,33 @@ class User(Base):
     def to_dict(self) -> dict:
         """Dictionary representation of the object"""
         return {
-            "id": self.id,
+            "id": str(self.id),
             "email": self.email,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "created_at": str(self.created_at),
+            "updated_at": str(self.updated_at)
         }
+    def set_password(self, password):
+         self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
 
     @staticmethod
     def create(user: dict) -> "User":
         """Create a new user"""
         from src.persistence import repo
-        users: List[User] = User.get_all()  # Retrieve all existing users
+        #users: List[User] = User.get_all()  
 
-        # Check if the user already exists
-        for u in users:
-            if u.email == user["email"]:
-                raise ValueError("User already exists")
+        
+        #for u in users:
+            #if u.email == user["email"]:
+                #raise ValueError("User already exists")
 
-        new_user = User(**user)  # Create a new user
+        new_user = User(**user)  
 
-        repo.save(new_user)  # Save the new user in the repository
+        repo.save(new_user) 
 
         return new_user
 
@@ -67,12 +74,11 @@ class User(Base):
         """Update an existing user"""
         from src.persistence import repo
 
-        user: Optional[User] = User.get(user_id)  # Retrieve user by ID
+        user: Optional[User] = User.get(user_id)  
 
         if not user:
-            return None  # Return None if user does not exist
-
-        # Update user fields
+            return None  
+        
         if "email" in data:
             user.email = data["email"]
         if "first_name" in data:
@@ -82,7 +88,7 @@ class User(Base):
         if "password" in data:
             user.password = data["password"]
 
-        repo.update(user)  # Update user in repository
+        repo.update(user)  
 
         return user
 

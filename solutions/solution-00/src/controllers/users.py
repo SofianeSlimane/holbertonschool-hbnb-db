@@ -4,13 +4,21 @@ Users controller module
 
 from flask import abort, request
 from src.models.user import User
-
-
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+from flask import Flask, jsonify, request
 def get_users():
     """Returns all users"""
-    users: list[User] = User.get_all()
+    current_user = get_jwt_identity()
+    if current_user is None:
+        return jsonify("Unauthorized"), 401
+    else:
+        users: list[User] = User.get_all()
 
-    return [user.to_dict() for user in users]
+        return [user.to_dict() for user in users]
 
 
 def create_user():
@@ -57,7 +65,13 @@ def update_user(user_id: str):
 
 def delete_user(user_id: str):
     """Deletes a user by ID"""
+    user_identity = get_jwt_identity()
+    if user_identity in users and users.get(user_identity)['role'] == "admin":
+        return jsonify("Admin Access: Granted")
+    else:
+        return jsonify("Forbidden"), 403
     if not User.delete(user_id):
         abort(404, f"User with ID {user_id} not found")
 
     return "", 204
+
