@@ -16,10 +16,10 @@ def create_app(config_class="src.config.DevelopmentConfig") -> Flask:
     """
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///development.db'
-    db = SQLAlchemy(app)
     app.url_map.strict_slashes = False
     app.config.from_object(config_class)
     app.config['JWT_SECRET_KEY'] = 'super-secret'
+    db = SQLAlchemy(app)
     register_extensions(app)
     register_routes(app)
     register_handlers(app)

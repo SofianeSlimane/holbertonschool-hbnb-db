@@ -10,6 +10,7 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask import Flask, jsonify, request
+
 def get_users():
     """Returns all users"""
     current_user = get_jwt_identity()

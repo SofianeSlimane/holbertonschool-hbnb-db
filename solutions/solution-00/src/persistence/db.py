@@ -18,6 +18,7 @@ from src import get_db, create_app
 from utils.constants import REPOSITORY_ENV_VAR
 from src import create_app
 import os
+from src.models.user import User
 db = get_db()
 class DBRepository(Repository):
     """Dummy DB repository"""
@@ -31,8 +32,9 @@ class DBRepository(Repository):
 
     def get(self, model_name: str, obj_id: str) -> Base | None:
         """Not implemented"""
-        model_name.get
-
+        if model_name == "user":
+            user_by_id = User.query.filter_by(id=obj_id).first()
+            return user_by_id
     def reload(self) -> None:
         """Not implemented"""
 

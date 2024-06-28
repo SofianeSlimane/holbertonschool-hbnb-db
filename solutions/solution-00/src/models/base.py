@@ -12,7 +12,7 @@ db = get_db()
 
 class Base(db.Model):
     __metaclass__ = ABCMeta
-    __tablename__ = "base"
+
     __abstract__ = True
     """
     Base Interface for all models
@@ -59,7 +59,7 @@ class Base(db.Model):
         """
         from src.persistence import repo
 
-        return repo.get(cls.__name__, id)
+        return repo.get(cls.__name__.lower(), id)
 
     @classmethod
     def get_all(cls) -> 'list["Any"]':

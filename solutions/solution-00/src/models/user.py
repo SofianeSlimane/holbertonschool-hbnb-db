@@ -92,11 +92,11 @@ class User(Base):
 
         return user
 
-    @staticmethod
-    def get(user_id: str) -> Optional["User"]:
-        """Retrieve a user by ID"""
-        from src.models.base import Base
-        return Base.get(user_id)
+    #@staticmethod
+    #def get(user_id: str) -> Optional["User"]:
+        #"""Retrieve a user by ID"""
+        #from src.models.base import Base
+        #return Base.get(cls, User, user_id)
 
     @staticmethod
     def get_all() -> List["User"]:
