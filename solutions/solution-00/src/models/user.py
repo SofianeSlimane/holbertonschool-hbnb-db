@@ -98,8 +98,8 @@ class User(Base):
         #from src.models.base import Base
         #return Base.get(cls, User, user_id)
 
-    @staticmethod
-    def get_all() -> List["User"]:
-        """Retrieve all users"""
-        from src.models.base import Base
-        return Base.get_all()
+    #@staticmethod
+    #def get_all() -> List["User"]:
+        #"""Retrieve all users"""
+        #from src.models.base import Base
+        #return Base.get_all()

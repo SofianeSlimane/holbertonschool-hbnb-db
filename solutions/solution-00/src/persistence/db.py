@@ -28,6 +28,9 @@ class DBRepository(Repository):
 
     def get_all(self, model_name: str) -> list:
         """Not implemented"""
+        if model_name == "user":
+            users_list = User.query.all()
+            return users_list
         
 
     def get(self, model_name: str, obj_id: str) -> Base | None:
@@ -56,5 +59,6 @@ class DBRepository(Repository):
     def delete(self, obj: Base) -> bool:
         """Not implemented"""
         db.session.delete(obj)
-        return False
+        db.session.commit()
+        return True
     

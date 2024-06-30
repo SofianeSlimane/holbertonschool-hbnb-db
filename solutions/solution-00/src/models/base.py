@@ -71,7 +71,7 @@ class Base(db.Model):
         """
         from src.persistence import repo
 
-        return repo.get_all(cls.__name__)
+        return repo.get_all(cls.__name__.lower())
 
     @classmethod
     def delete(cls, id) -> bool:
