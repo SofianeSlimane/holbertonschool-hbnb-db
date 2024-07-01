@@ -22,6 +22,7 @@ from src.models.user import User
 from src.models.country import Country
 from utils.populate import populate_db
 from src.models.amenity import Amenity
+from src.models.city import City
 db = get_db()
 class DBRepository(Repository):
     """Dummy DB repository"""
@@ -41,6 +42,9 @@ class DBRepository(Repository):
         elif model_name == "amenity":
             amenity_list = Amenity.query.all()
             return amenity_list
+        elif model_name == "city":
+            city_list = City.query.all()
+            return city_list
         
         
 
@@ -55,6 +59,9 @@ class DBRepository(Repository):
         elif model_name == "amenity":
             amenity_by_id = Amenity.query.filter_by(id=obj_id).first()
             return amenity_by_id
+        elif model_name == "city":
+            city_by_id = City.query.filter_by(id=obj_id).first()
+            return city_by_id
     def reload(self) -> None:
         """Not implemented"""
         populate_db(self)
