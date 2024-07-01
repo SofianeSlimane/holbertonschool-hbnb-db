@@ -18,6 +18,7 @@ class Review(Base):
     user_id: Mapped[str] = mapped_column(db.ForeignKey("users.id"), nullable=False)
     comment: Mapped[str] = mapped_column(db.String, nullable=False)
     rating: Mapped[float] = mapped_column(db.Float, nullable=False)
+    id: Mapped[str] = mapped_column(db.String, primary_key=True)
 
     def __init__(
         self, place_id: str, user_id: str, comment: str, rating: float, **kw

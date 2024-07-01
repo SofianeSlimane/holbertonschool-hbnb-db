@@ -19,34 +19,20 @@ class Place(Base):
     address: Mapped[str] = mapped_column(db.String, nullable=False)
     latitude: Mapped[float] = mapped_column(db.Float, nullable=False)
     longitude: Mapped[float] = mapped_column(db.Float, nullable=False)
-    host_id: Mapped[str] = mapped_column(db.String, nullable=False)
-    city_id: Mapped[str] = mapped_column(db.String, nullable=False)
+    host_id: Mapped[str] = mapped_column(db.String, db.ForeignKey('users.id'), nullable=False)
+    city_id: Mapped[str] = mapped_column(db.String, db.ForeignKey("cities.id"), nullable=False)
     price_per_night: Mapped[int] = mapped_column(db.Integer, nullable=False)
     number_of_rooms: Mapped[int] = mapped_column(db.Integer, nullable=False)
     number_of_bathrooms: Mapped[int] = mapped_column(db.Integer, nullable=False)
     max_guests: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    id: Mapped[str] = mapped_column(db.String, primary_key=True)
 
     def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
         """Dummy init"""
 
-        if not data:
-            return
+        for key, value in data.items():
+            setattr(self, key, value)
 
-        self.place_name = db.Column(db.String(64), primary_key=False, nullable = False, default=data.get("name", ""))
-        self.description = db.Column(db.String(1024), primary_key=False, nullable = False, default=data.get("description", ""))
-        self.address = db.Column(db.String(1024), primary_key=False, nullable = False, default=data.get("address", ""))
-        self.city_id = db.Column(db.String(36), db.ForeignKey('cities.id'), primary_key=False, nullable = False, default=data["city_id"])
-        self.latitude = db.Column(db.Float, primary_key=False, nullable = False, default=float(data.get("latitude", 0.0)))
-        self.longitude = db.Column(db.Float, primary_key=False, nullable = False, default=float(data.get("longitude", 0.0)))
-        self.host_id = db.Column(db.String(36), db.ForeignKey('users.id'), primary_key=False, nullable = False, default=data["host_id"])
-        self.price_per_night = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("price_per_night", 0)))
-        self.number_of_rooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_rooms", 0)))
-        self.number_of_bathrooms = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("number_of_bathrooms", 0)))
-        self.max_guests = db.Column(db.Integer, primary_key=False, nullable = False, default=int(data.get("max_guests", 0)))
-        __mapper_args__ = {
-            'polymorphic_identity': 'places',
-            'polymorphic_on': self.id
-        }
 
     def __repr__(self) -> str:
         """Dummy repr"""

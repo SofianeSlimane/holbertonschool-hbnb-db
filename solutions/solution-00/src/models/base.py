@@ -18,15 +18,15 @@ class Base(db.Model):
     Base Interface for all models
     """
 
-    id: Mapped[str] = mapped_column(db.String, nullable=False, primary_key=True)
+    #id: Mapped[str] = mapped_column(db.String, primary_key=True)
     created_at: Mapped[str] = mapped_column(db.DateTime, nullable=False)
     updated_at: Mapped[str] = mapped_column(db.DateTime, nullable=False)
 
     def __init__(
         self,
-        id = uuid.uuid4(),
-        created_at = str(datetime.datetime.now()),
-        updated_at = str(datetime.datetime.now()),
+        id = str(uuid.uuid4()),
+        created_at = datetime.datetime.now(),
+        updated_at = datetime.datetime.now(),
         **kwargs,
     ) -> None:
         """

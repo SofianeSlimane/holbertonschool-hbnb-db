@@ -19,18 +19,29 @@ from utils.constants import REPOSITORY_ENV_VAR
 from src import create_app
 import os
 from src.models.user import User
+from src.models.country import Country
+from utils.populate import populate_db
+from src.models.amenity import Amenity
 db = get_db()
 class DBRepository(Repository):
     """Dummy DB repository"""
     
     def __init__(self) -> None:
         """Not implemented"""
+        self.reload()
 
     def get_all(self, model_name: str) -> list:
         """Not implemented"""
         if model_name == "user":
             users_list = User.query.all()
             return users_list
+        elif model_name == "country":
+            country_list = Country.query.all()
+            return country_list
+        elif model_name == "amenity":
+            amenity_list = Amenity.query.all()
+            return amenity_list
+        
         
 
     def get(self, model_name: str, obj_id: str) -> Base | None:
@@ -38,12 +49,18 @@ class DBRepository(Repository):
         if model_name == "user":
             user_by_id = User.query.filter_by(id=obj_id).first()
             return user_by_id
+        elif model_name == "country":
+            country_by_code = Country.query.filter_by(code=obj_id).first()
+            return country_by_code
+        elif model_name == "amenity":
+            amenity_by_id = Amenity.query.filter_by(id=obj_id).first()
+            return amenity_by_id
     def reload(self) -> None:
         """Not implemented"""
+        populate_db(self)
 
     def save(self, obj) -> None:
         """Not implemented"""
-        
         db.session.add(obj)
         db.session.commit()
         

@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
+import os
 cors = CORS()
 
 def create_app(config_class="src.config.DevelopmentConfig") -> Flask:
@@ -17,7 +18,7 @@ def create_app(config_class="src.config.DevelopmentConfig") -> Flask:
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///development.db'
     app.url_map.strict_slashes = False
-    app.config.from_object(config_class)
+    app.config.from_object(config_class if os.environ.get('ENV') == 'development' else 'src.config.ProductionConfig')
     app.config['JWT_SECRET_KEY'] = 'super-secret'
     db = SQLAlchemy(app)
     register_extensions(app)
@@ -25,6 +26,7 @@ def create_app(config_class="src.config.DevelopmentConfig") -> Flask:
     register_handlers(app)
     jwt = JWTManager(app)
     with app.app_context():
+        db.drop_all()
         db.create_all()
     return app
 
