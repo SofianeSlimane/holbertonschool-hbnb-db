@@ -24,7 +24,7 @@ class User(Base):
     def __init__(self, email: str, password: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw):
         """Initialize a new User"""
         self.email = email
-        self.password = password if password else ""
+        self.password = password
         self.first_name = first_name
         self.last_name = last_name
         self.created_at = datetime.datetime.now()
@@ -44,13 +44,15 @@ class User(Base):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "created_at": str(self.created_at),
-            "updated_at": str(self.updated_at)
+            "updated_at": str(self.updated_at),
+            "password": self.password
         }
     def set_password(self, password):
-         self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+         return bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)
+        user_check_pw = User.get(self.id)
+        return bcrypt.check_password_hash(user_check_pw.password, password)
 
     @staticmethod
     def create(user: dict) -> "User":
@@ -64,7 +66,7 @@ class User(Base):
                 #raise ValueError("User already exists")
 
         new_user = User(**user)  
-
+        new_user.password = User.set_password(new_user, new_user.password)
         repo.save(new_user) 
 
         return new_user
