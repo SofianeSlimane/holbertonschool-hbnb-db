@@ -6,6 +6,8 @@ from src.models.base import Base
 from src.models.city import City
 from src.models.user import User
 from sqlalchemy.orm import Mapped, mapped_column
+import datetime
+import uuid
 from src import get_db
 
 db = get_db()
@@ -14,7 +16,7 @@ class Place(Base):
     __tablename__ = "places"
     """Place representation"""
 
-    place_name: Mapped[str] = mapped_column(db.String, nullable=False)
+    name: Mapped[str] = mapped_column(db.String, nullable=False)
     description: Mapped[str] = mapped_column(db.String, nullable=False)
     address: Mapped[str] = mapped_column(db.String, nullable=False)
     latitude: Mapped[float] = mapped_column(db.Float, nullable=False)
@@ -30,19 +32,30 @@ class Place(Base):
     def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
         """Dummy init"""
 
-        for key, value in data.items():
-            setattr(self, key, value)
-
+        self.name = data.get("name")
+        self.description = data.get("description")
+        self.address = data.get("address")
+        self.latitude = data.get("latitude")
+        self.longitude = data.get("longitude")
+        self.host_id = data.get("host_id")
+        self.city_id = data.get("city_id")
+        self.price_per_night = data.get("price_per_night")
+        self.number_of_rooms = data.get("number_of_rooms")
+        self.number_of_bathrooms = data.get("number_of_bathrooms")
+        self.max_guests = data.get("max_guests")
+        self.created_at = datetime.datetime.now()
+        self.updated_at = datetime.datetime.now()
+        self.id = str(uuid.uuid4())
 
     def __repr__(self) -> str:
         """Dummy repr"""
-        return f"<Place {self.id} ({self.place_name})>"
+        return f"<Place {self.id} ({self.name})>"
 
     def to_dict(self) -> dict:
         """Dictionary representation of the object"""
         return {
             "id": self.id,
-            "name": self.place_name,
+            "name": self.name,
             "description": self.description,
             "address": self.address,
             "latitude": self.latitude,
@@ -53,8 +66,8 @@ class Place(Base):
             "number_of_rooms": self.number_of_rooms,
             "number_of_bathrooms": self.number_of_bathrooms,
             "max_guests": self.max_guests,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
         }
 
     @staticmethod

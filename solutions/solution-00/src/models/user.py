@@ -18,13 +18,13 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(db.String, nullable=False)  
     last_name: Mapped[str] = mapped_column(db.String, nullable=False)
     email: Mapped[str] = mapped_column(db.String, nullable=False)
-    password: Mapped[str] = mapped_column(db.String, nullable=False)
+    password: Mapped[str] = mapped_column(db.String, nullable=True)
     is_admin: Mapped[bool] = mapped_column(db.String, nullable=False)
     id: Mapped[str] = mapped_column(db.String, primary_key=True)
-    def __init__(self, email: str, password: str, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw):
+    def __init__(self, email: str, password: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw):
         """Initialize a new User"""
         self.email = email
-        self.password = password
+        self.password = password if password else ""
         self.first_name = first_name
         self.last_name = last_name
         self.created_at = datetime.datetime.now()
