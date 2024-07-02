@@ -24,6 +24,7 @@ from utils.populate import populate_db
 from src.models.amenity import Amenity
 from src.models.city import City
 from src.models.place import Place
+from src.models.review import Review
 db = get_db()
 class DBRepository(Repository):
     """Dummy DB repository"""
@@ -49,6 +50,9 @@ class DBRepository(Repository):
         elif model_name == "place":
             places_list = Place.query.all()
             return places_list
+        elif model_name == "review":
+            review_list = Review.query.all()
+            return review_list
 
     def get(self, model_name: str, obj_id: str) -> Base | None:
         """Not implemented"""
@@ -67,6 +71,10 @@ class DBRepository(Repository):
         elif model_name == "place":
             place_by_id = Place.query.filter_by(id=obj_id).first()
             return place_by_id
+        elif model_name == "review":
+            review_by_id = Review.query.filter_by(id=obj_id).first()
+            return review_by_id
+
     def reload(self) -> None:
         """Not implemented"""
         populate_db(self)
