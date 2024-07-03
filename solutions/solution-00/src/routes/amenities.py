@@ -3,6 +3,9 @@ This module contains the routes for the amenities blueprint
 """
 
 from flask import Blueprint
+from flask_jwt_extended import jwt_required
+from flask import Flask, jsonify, request
+from flask_jwt_extended import get_jwt_identity
 from src.controllers.amenities import (
     create_amenity,
     delete_amenity,
@@ -13,9 +16,55 @@ from src.controllers.amenities import (
 
 amenities_bp = Blueprint("amenities", __name__, url_prefix="/amenities")
 
-amenities_bp.route("/", methods=["GET"])(get_amenities)
-amenities_bp.route("/", methods=["POST"])(create_amenity)
+#amenities_bp.route("/", methods=["GET"])(get_amenities)
+#amenities_bp.route("/", methods=["POST"])(create_amenity)
 
-amenities_bp.route("/<amenity_id>", methods=["GET"])(get_amenity_by_id)
-amenities_bp.route("/<amenity_id>", methods=["PUT"])(update_amenity)
-amenities_bp.route("/<amenity_id>", methods=["DELETE"])(delete_amenity)
+#amenities_bp.route("/<amenity_id>", methods=["GET"])(get_amenity_by_id)
+#amenities_bp.route("/<amenity_id>", methods=["PUT"])(update_amenity)
+#amenities_bp.route("/<amenity_id>", methods=["DELETE"])(delete_amenity)
+
+@amenities_bp.route("/", methods=['GET'])
+@jwt_required()
+def all_amenities():
+    current_user = get_jwt_identity()
+    if current_user:
+        return get_amenities
+    else:
+        return "Unauthorized", 401
+    
+@amenities_bp.route("/", methods=['POST'])
+@jwt_required()
+def post_amenity():
+    current_user = get_jwt_identity()
+    if current_user:
+        return create_amenity
+    else:
+        return "Unauthorized", 401
+    
+@amenities_bp.route("/<amenity_id>", methods=['GET'])
+@jwt_required()
+def retrieves_amenity():
+    current_user = get_jwt_identity()
+    if current_user:
+       return get_amenity_by_id
+    else:
+        return "Unauthorized", 401
+    
+@amenities_bp.route("/<amenity_id>", methods=['PUT'])
+@jwt_required()
+def modify_amenity():
+    current_user = get_jwt_identity()
+    if current_user:
+       return update_amenity
+    else:
+        return "Unauthorized", 401
+    
+@amenities_bp.route("/<amenity_id>", methods=['DELETE'])
+@jwt_required()
+def remove_amenity():
+    current_user = get_jwt_identity()
+    if current_user:
+       return delete_amenity
+    else:
+        return "Unauthorized", 401
+    

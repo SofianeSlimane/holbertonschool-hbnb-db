@@ -19,7 +19,7 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(db.String, nullable=False)
     email: Mapped[str] = mapped_column(db.String, nullable=False)
     password: Mapped[str] = mapped_column(db.String, nullable=True)
-    is_admin: Mapped[bool] = mapped_column(db.String, nullable=False)
+    is_admin: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
     id: Mapped[str] = mapped_column(db.String, primary_key=True)
     def __init__(self, email: str, password: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw):
         """Initialize a new User"""
