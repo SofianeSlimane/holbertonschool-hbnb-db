@@ -2,6 +2,7 @@ import requests
 import uuid
 
 from tests import test_functions
+from flask import jsonify
 
 API_URL = "http://127.0.0.1:5000/"
 
@@ -22,16 +23,37 @@ def create_unique_user():
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
-    return response.json()["id"]
+    return {"user_dictionary": response.json(), "non_crypted_passwd": new_user.get("password")}
 
 
+def login_user():
+    user = create_unique_user()
+    login_info = {
+                "email": user.get("user_dictionary")["email"],
+                "password": user.get("non_crypted_passwd")
+                }
+    print(login_info.get("password"))
+    print(login_info.get("email"))
+    response = requests.post(f"{API_URL}/login", json=login_info)
+    json_obj = response.json()
+    jwt_token = json_obj.get("access_token")
+    #print(jwt_token)
+    return jwt_token
+
+
+
+    
 def test_get_users():
     """
     Test to retrieve all users
     Sends a GET request to /users and checks that the response status is 200
     and the returned data is a list.
     """
-    response = requests.get(f"{API_URL}/users")
+    jwt_token = login_user()
+    print("my jwt", jwt_token)
+    print("The type of the token", type(jwt_token))
+    my_header = {"Authorization": f"Bearer {jwt_token}"}
+    response = requests.get(f"{API_URL}/users", headers=my_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -46,6 +68,7 @@ def test_post_user():
     Sends a POST request to /users with new user data and checks that the
     response status is 201 and the returned data matches the sent data.
     """
+    
     unique_email = f"test.user.{uuid.uuid4()}@example.com"
     new_user = {
         "email": unique_email,
@@ -79,17 +102,19 @@ def test_get_user():
     Creates a new user, then sends a GET request to /users/{id} and checks that the
     response status is 200 and the returned data matches the created user's data.
     """
-    user_id = create_unique_user()
-
+    jwt_token = login_user()
+    my_header = {"Authorization": f"Bearer {jwt_token}"}
+    new_user = create_unique_user()
+    new_user_id = new_user.get("user_dictionary")["id"]
     # Retrieve the newly created user
-    response = requests.get(f"{API_URL}/users/{user_id}")
+    response = requests.get(f"{API_URL}/users/{new_user_id}", headers=my_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
     user_data = response.json()
     assert (
-        user_data["id"] == user_id
-    ), f"Expected user ID to be {user_id} but got {user_data['id']}"
+        user_data["id"] == new_user_id
+    ), f"Expected user ID to be {new_user_id} but got {user_data['id']}"
     assert "email" in user_data, "Email not in response"
     assert "first_name" in user_data, "First name not in response"
     assert "last_name" in user_data, "Last name not in response"
@@ -103,6 +128,8 @@ def test_put_user():
     Creates a new user, then sends a PUT request to /users/{id} with updated user data
     and checks that the response status is 200 and the returned data matches the updated data.
     """
+    jwt_token = login_user()
+    my_header = {"Authorization": f"Bearer {jwt_token}"}
     user_id = create_unique_user()
 
     # Update the newly created user
@@ -112,7 +139,7 @@ def test_put_user():
         "last_name": "Smith",
         "password": "newpassword123"
     }
-    response = requests.put(f"{API_URL}/users/{user_id}", json=updated_user)
+    response = requests.put(f"{API_URL}/users/{user_id}", json=updated_user, headers=my_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -137,19 +164,25 @@ def test_delete_user():
     Creates a new user, then sends a DELETE request to /users/{id} and checks that the
     response status is 204 indicating successful deletion.
     """
+    jwt_token = login_user()
+    my_header = {"Authorization": f"Bearer {jwt_token}"}
     user_id = create_unique_user()
 
     # Delete the newly created user
-    response = requests.delete(f"{API_URL}/users/{user_id}")
+    response = requests.delete(f"{API_URL}/users/{user_id}", headers=my_header)
     assert (
         response.status_code == 204
     ), f"Expected status code 204 but got {response.status_code}. Response: {response.text}"
+
+
+
 
 
 if __name__ == "__main__":
     # Run the tests
     test_functions(
         [
+            
             test_get_users,
             test_post_user,
             test_get_user,

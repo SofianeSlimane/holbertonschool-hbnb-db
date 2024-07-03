@@ -29,30 +29,31 @@ users_bp = Blueprint("users", __name__, url_prefix="/users")
 
 
 
-@users_bp.route("/", methods=['GET', 'POST'])
+@users_bp.route("/", methods=['GET'])
 @jwt_required()
 def protected1():
     current_user = get_jwt_identity()
     if current_user:
-        if request.method == 'GET':
-
-            return get_users()
-        elif request.method == 'POST':
-            return create_user()
+        return get_users()
     else:
         return "Unauthorized", 401
+
+
     
-    
+@users_bp.route("/", methods=['POST'])
+def post_user():
+    return create_user()
+        
 
 
 
 @users_bp.route("/<user_id>", methods=['GET', 'PUT', 'DELETE'])
 @jwt_required()
-def protected2():
+def protected2(user_id):
     current_user = get_jwt_identity()
     if current_user:
         if request.method == 'GET':
-            return get_user_by_id()
+            return get_user_by_id(user_id)
         elif request.method == 'PUT':
             return update_user()
         elif request.method == 'DELETE':
