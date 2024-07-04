@@ -55,8 +55,8 @@ def protected2(user_id):
         if request.method == 'GET':
             return get_user_by_id(user_id)
         elif request.method == 'PUT':
-            return update_user()
+            return update_user(user_id)
         elif request.method == 'DELETE':
-            return delete_user()
+            return delete_user(user_id)
     else:
         return "Unauthorized", 401

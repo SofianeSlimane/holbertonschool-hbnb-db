@@ -130,8 +130,9 @@ def test_put_user():
     """
     jwt_token = login_user()
     my_header = {"Authorization": f"Bearer {jwt_token}"}
-    user_id = create_unique_user()
-
+    user_to_update = create_unique_user()
+    user_dict = user_to_update.get("user_dictionary")
+    user__id = user_dict.get("id")
     # Update the newly created user
     updated_user = {
         "email": f"updated.user.{uuid.uuid4()}@example.com",
@@ -139,7 +140,7 @@ def test_put_user():
         "last_name": "Smith",
         "password": "newpassword123"
     }
-    response = requests.put(f"{API_URL}/users/{user_id}", json=updated_user, headers=my_header)
+    response = requests.put(f"{API_URL}/users/{user__id}", json=updated_user, headers=my_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -166,10 +167,11 @@ def test_delete_user():
     """
     jwt_token = login_user()
     my_header = {"Authorization": f"Bearer {jwt_token}"}
-    user_id = create_unique_user()
-
+    user_to_delete = create_unique_user()
+    user_dict = user_to_delete.get("user_dictionary")
+    user__id = user_dict.get("id")
     # Delete the newly created user
-    response = requests.delete(f"{API_URL}/users/{user_id}", headers=my_header)
+    response = requests.delete(f"{API_URL}/users/{user__id}", headers=my_header)
     assert (
         response.status_code == 204
     ), f"Expected status code 204 but got {response.status_code}. Response: {response.text}"
