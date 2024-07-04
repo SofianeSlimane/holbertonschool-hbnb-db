@@ -47,10 +47,10 @@ def post_a_place():
 
 @places_bp.route('/<place_id>', methods=["GET"])
 @jwt_required()
-def retrieves_place():
+def retrieves_place(place_id):
     current_user = get_jwt_identity()
     if current_user:
-        return get_place_by_id()
+        return get_place_by_id(place_id)
 
     else:
         return "Unauthorized", 401
@@ -58,10 +58,10 @@ def retrieves_place():
 
 @places_bp.route('/<place_id>', methods=['PUT'])
 @jwt_required()
-def update_a_place():
+def update_a_place(place_id):
     current_user = get_jwt_identity()
     if current_user:
-        return update_place()
+        return update_place(place_id)
     else:
         return "Unauthorized", 401
     
@@ -69,10 +69,10 @@ def update_a_place():
 
 @places_bp.route('/<place_id>', methods=['DELETE'])
 @jwt_required()
-def protected():
+def protected(place_id):
     current_user = get_jwt_identity()
     if current_user:
-        return delete_place()
+        return delete_place(place_id)
     else:
         return "Unauthorized", 401
     

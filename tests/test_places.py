@@ -13,13 +13,17 @@ def create_unique_user():
     Helper function to create a new user with a unique email
     Sends a POST request to /users with new user data and returns the created user's ID.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     unique_email = f"test.user.{uuid.uuid4()}@example.com"
     new_user = {
         "email": unique_email,
         "first_name": "Test",
         "last_name": "User",
+        "password": "passwd"
     }
-    response = requests.post(f"{API_URL}/users", json=new_user)
+    response = requests.post(f"{API_URL}/users", json=new_user, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -31,8 +35,11 @@ def create_city():
     Helper function to create a new city
     Sends a POST request to /cities with new city data and returns the created city's ID.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     new_city = {"name": "Test City", "country_code": "UY"}
-    response = requests.post(f"{API_URL}/cities", json=new_city)
+    response = requests.post(f"{API_URL}/cities", json=new_city, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -45,7 +52,10 @@ def test_get_places():
     Sends a GET request to /places and checks that the response status is 200
     and the returned data is a list.
     """
-    response = requests.get(f"{API_URL}/places")
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
+    response = requests.get(f"{API_URL}/places", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -60,6 +70,9 @@ def test_post_place():
     Sends a POST request to /places with new place data and checks that the
     response status is 201 and the returned data matches the sent data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     city_id = create_city()
     user_id = create_unique_user()
     new_place = {
@@ -75,7 +88,7 @@ def test_post_place():
         "number_of_bathrooms": 1,
         "max_guests": 4,
     }
-    response = requests.post(f"{API_URL}/places", json=new_place)
+    response = requests.post(f"{API_URL}/places", json=new_place, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -96,6 +109,9 @@ def test_get_place():
     Creates a new place, then sends a GET request to /places/{id} and checks that the
     response status is 200 and the returned data matches the created place's data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     city_id = create_city()
     user_id = create_unique_user()
     new_place = {
@@ -111,14 +127,14 @@ def test_get_place():
         "number_of_bathrooms": 2,
         "max_guests": 6,
     }
-    response = requests.post(f"{API_URL}/places", json=new_place)
+    response = requests.post(f"{API_URL}/places", json=new_place, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
     place_id = response.json()["id"]
 
     # Retrieve the newly created place
-    response = requests.get(f"{API_URL}/places/{place_id}")
+    response = requests.get(f"{API_URL}/places/{place_id}", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -138,6 +154,9 @@ def test_put_place():
     Creates a new place, then sends a PUT request to /places/{id} with updated place data
     and checks that the response status is 200 and the returned data matches the updated data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     city_id = create_city()
     user_id = create_unique_user()
     new_place = {
@@ -153,7 +172,7 @@ def test_put_place():
         "number_of_bathrooms": 3,
         "max_guests": 8,
     }
-    response = requests.post(f"{API_URL}/places", json=new_place)
+    response = requests.post(f"{API_URL}/places", json=new_place, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -173,7 +192,7 @@ def test_put_place():
         "number_of_bathrooms": 2,
         "max_guests": 6,
     }
-    response = requests.put(f"{API_URL}/places/{place_id}", json=updated_place)
+    response = requests.put(f"{API_URL}/places/{place_id}", json=updated_place, headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -193,6 +212,9 @@ def test_delete_place():
     Creates a new place, then sends a DELETE request to /places/{id} and checks that the
     response status is 204 indicating successful deletion.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     city_id = create_city()
     user_id = create_unique_user()
     new_place = {
@@ -208,14 +230,14 @@ def test_delete_place():
         "number_of_bathrooms": 1,
         "max_guests": 4,
     }
-    response = requests.post(f"{API_URL}/places", json=new_place)
+    response = requests.post(f"{API_URL}/places", json=new_place, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
     place_id = response.json()["id"]
 
     # Delete the newly created place
-    response = requests.delete(f"{API_URL}/places/{place_id}")
+    response = requests.delete(f"{API_URL}/places/{place_id}", headers=authorization_header)
     assert (
         response.status_code == 204
     ), f"Expected status code 204 but got {response.status_code}. Response: {response.text}"
