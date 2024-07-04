@@ -4,6 +4,7 @@ import requests
 import uuid
 
 from tests import test_functions
+from tests.jwt_func import login_user
 
 API_URL = "http://localhost:5000"
 
@@ -28,7 +29,10 @@ def test_get_amenities():
     Sends a GET request to /amenities and checks that the response status is 200
     and the returned data is a list.
     """
-    response = requests.get(f"{API_URL}/amenities")
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
+    response = requests.get(f"{API_URL}/amenities", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -43,9 +47,12 @@ def test_post_amenity():
     Sends a POST request to /amenities with new amenity data and checks that the
     response status is 201 and the returned data matches the sent data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     unique_amenity_name = f"Test Amenity {uuid.uuid4()}"
     new_amenity = {"name": unique_amenity_name}
-    response = requests.post(f"{API_URL}/amenities", json=new_amenity)
+    response = requests.post(f"{API_URL}/amenities", json=new_amenity, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -65,10 +72,13 @@ def test_get_amenity():
     Creates a new amenity, then sends a GET request to /amenities/{id} and checks that the
     response status is 200 and the returned data matches the created amenity's data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     amenity_id = create_unique_amenity()
 
     # Retrieve the newly created amenity
-    response = requests.get(f"{API_URL}/amenities/{amenity_id}")
+    response = requests.get(f"{API_URL}/amenities/{amenity_id}", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -87,11 +97,14 @@ def test_put_amenity():
     Creates a new amenity, then sends a PUT request to /amenities/{id} with updated amenity data
     and checks that the response status is 200 and the returned data matches the updated data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     amenity_id = create_unique_amenity()
 
     # Update the newly created amenity
     updated_amenity = {"name": f"Updated Amenity {uuid.uuid4()}"}
-    response = requests.put(f"{API_URL}/amenities/{amenity_id}", json=updated_amenity)
+    response = requests.put(f"{API_URL}/amenities/{amenity_id}", json=updated_amenity, headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -110,10 +123,13 @@ def test_delete_amenity():
     Creates a new amenity, then sends a DELETE request to /amenities/{id} and checks that the
     response status is 204 indicating successful deletion.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     amenity_id = create_unique_amenity()
 
     # Delete the newly created amenity
-    response = requests.delete(f"{API_URL}/amenities/{amenity_id}")
+    response = requests.delete(f"{API_URL}/amenities/{amenity_id}", headers=authorization_header)
     assert (
         response.status_code == 204
     ), f"Expected status code 204 but got {response.status_code}. Response: {response.text}"

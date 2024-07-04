@@ -15,7 +15,10 @@ def test_get_countries():
     Sends a GET request to /countries and checks that the response status is 200
     and the returned data is a list.
     """
-    response = requests.get(f"{API_URL}/countries")
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
+    response = requests.get(f"{API_URL}/countries", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -30,8 +33,11 @@ def test_get_country():
     Sends a GET request to /countries/{code} and checks that the response status is 200
     and the returned data contains the expected fields.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     country_code = "UY"  # Use an existing country code for this test
-    response = requests.get(f"{API_URL}/countries/{country_code}")
+    response = requests.get(f"{API_URL}/countries/{country_code}", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -48,8 +54,11 @@ def test_get_country_cities():
     Sends a GET request to /countries/{code}/cities and checks that the response status is 200
     and the returned data is a list of cities.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     country_code = "UY"  # Use an existing country code for this test
-    response = requests.get(f"{API_URL}/countries/{country_code}/cities")
+    response = requests.get(f"{API_URL}/countries/{country_code}/cities", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -68,7 +77,10 @@ def test_get_cities():
     Sends a GET request to /cities and checks that the response status is 200
     and the returned data is a list.
     """
-    response = requests.get(f"{API_URL}/cities")
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
+    response = requests.get(f"{API_URL}/cities", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -83,8 +95,11 @@ def test_post_city():
     Sends a POST request to /cities with new city data and checks that the
     response status is 201 and the returned data matches the sent data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     new_city = {"name": f"Test City {uuid.uuid4()}", "country_code": country_code}
-    response = requests.post(f"{API_URL}/cities", json=new_city)
+    response = requests.post(f"{API_URL}/cities", json=new_city, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -107,10 +122,13 @@ def test_get_city():
     Creates a new city, then sends a GET request to /cities/{id} and checks that the
     response status is 200 and the returned data matches the created city's data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     city_id = test_post_city()
 
     # Retrieve the newly created city
-    response = requests.get(f"{API_URL}/cities/{city_id}")
+    response = requests.get(f"{API_URL}/cities/{city_id}", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -130,9 +148,12 @@ def test_put_city():
     Creates a new city, then sends a PUT request to /cities/{id} with updated city data
     and checks that the response status is 200 and the returned data matches the updated data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     city_id = test_post_city()
     updated_city = {"name": f"Updated City {uuid.uuid4()}", "country_code": "US"}
-    response = requests.put(f"{API_URL}/cities/{city_id}", json=updated_city)
+    response = requests.put(f"{API_URL}/cities/{city_id}", json=updated_city, headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -154,10 +175,13 @@ def test_delete_city():
     Creates a new city, then sends a DELETE request to /cities/{id} and checks that the
     response status is 204 indicating successful deletion.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     city_id = test_post_city()
 
     # Delete the newly created city
-    response = requests.delete(f"{API_URL}/cities/{city_id}")
+    response = requests.delete(f"{API_URL}/cities/{city_id}", headers=authorization_header)
     assert (
         response.status_code == 204
     ), f"Expected status code 204 but got {response.status_code}. Response: {response.text}"

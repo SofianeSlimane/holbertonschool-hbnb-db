@@ -28,43 +28,38 @@ amenities_bp = Blueprint("amenities", __name__, url_prefix="/amenities")
 def all_amenities():
     current_user = get_jwt_identity()
     if current_user:
-        return get_amenities
+        return get_amenities()
     else:
         return "Unauthorized", 401
     
 @amenities_bp.route("/", methods=['POST'])
-@jwt_required()
 def post_amenity():
-    current_user = get_jwt_identity()
-    if current_user:
-        return create_amenity
-    else:
-        return "Unauthorized", 401
+    return create_amenity()
     
 @amenities_bp.route("/<amenity_id>", methods=['GET'])
 @jwt_required()
-def retrieves_amenity():
+def retrieves_amenity(amenity_id):
     current_user = get_jwt_identity()
     if current_user:
-       return get_amenity_by_id
+       return get_amenity_by_id(amenity_id)
     else:
         return "Unauthorized", 401
     
 @amenities_bp.route("/<amenity_id>", methods=['PUT'])
 @jwt_required()
-def modify_amenity():
+def modify_amenity(amenity_id):
     current_user = get_jwt_identity()
     if current_user:
-       return update_amenity
+       return update_amenity(amenity_id)
     else:
         return "Unauthorized", 401
     
 @amenities_bp.route("/<amenity_id>", methods=['DELETE'])
 @jwt_required()
-def remove_amenity():
+def remove_amenity(amenity_id):
     current_user = get_jwt_identity()
     if current_user:
-       return delete_amenity
+       return delete_amenity(amenity_id)
     else:
         return "Unauthorized", 401
     

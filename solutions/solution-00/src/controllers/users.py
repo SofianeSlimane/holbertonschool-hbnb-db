@@ -67,4 +67,3 @@ def delete_user(user_id: str):
         abort(404, f"User with ID {user_id} not found")
 
     return "", 204
-

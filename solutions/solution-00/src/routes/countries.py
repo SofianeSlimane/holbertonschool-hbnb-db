@@ -24,26 +24,26 @@ countries_bp = Blueprint("countries", __name__, url_prefix="/countries")
 def all_countries():
     current_user = get_jwt_identity()
     if current_user:
-        return get_countries
+        return get_countries()
     else:
         return "Unauthorized", 401
     
 
 @countries_bp.route('/<code>', methods=['GET'])
 @jwt_required()
-def post_country():
+def retrieves_country(code):
     current_user = get_jwt_identity()
     if current_user:
-        return get_country_by_code
+        return get_country_by_code(code)
     else:
         return "Unauthorized", 401
     
 @countries_bp.route('/<code>/cities', methods=['GET'])
 @jwt_required()
-def retrieves_country_cities():
+def retrieves_country_cities(code):
     current_user = get_jwt_identity()
     if current_user:
-        return get_country_cities
+        return get_country_cities(code)
     else:
         return "Unauthorized", 401
     

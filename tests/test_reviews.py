@@ -13,13 +13,16 @@ def create_user():
     Helper function to create a new user with a unique email.
     Sends a POST request to /users with new user data and returns the created user's ID.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     unique_email = f"test.user.{uuid.uuid4()}@example.com"
     new_user = {
         "email": unique_email,
         "first_name": "Test",
         "last_name": "User",
     }
-    response = requests.post(f"{API_URL}/users", json=new_user)
+    response = requests.post(f"{API_URL}/users", json=new_user, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -31,8 +34,11 @@ def create_city(country_code: str):
     Helper function to create a new city.
     Sends a POST request to /cities with new city data and returns the created city's ID.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     new_city = {"name": "Test City", "country_code": country_code}
-    response = requests.post(f"{API_URL}/cities", json=new_city)
+    response = requests.post(f"{API_URL}/cities", json=new_city, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -72,6 +78,9 @@ def test_get_reviews_from_place():
     Sends a GET request to /places/{place_id}/reviews and checks that the response status is 200
     and the returned data is a list.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     place_id = create_place()
     user_id = create_user()
     new_review = {
@@ -80,7 +89,7 @@ def test_get_reviews_from_place():
         "comment": "Great place to stay!",
         "rating": 5.0,
     }
-    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review)
+    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -106,6 +115,9 @@ def test_get_reviews_from_user():
     Sends a GET request to /users/{user_id}/reviews and checks that the response status is 200
     and the returned data is a list.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     place_id = create_place()
     user_id = create_user()
     new_review = {
@@ -114,7 +126,7 @@ def test_get_reviews_from_user():
         "comment": "Great place to stay!",
         "rating": 5.0,
     }
-    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review)
+    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -140,6 +152,9 @@ def test_post_review():
     Sends a POST request to /reviews with new review data and checks that the
     response status is 201 and the returned data matches the sent data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     place_id = create_place()
     user_id = create_user()
     new_review = {
@@ -147,7 +162,7 @@ def test_post_review():
         "comment": "This place is amazing!",
         "rating": 4.5,
     }
-    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review)
+    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -168,6 +183,9 @@ def test_get_review():
     Creates a new review, then sends a GET request to /reviews/{id} and checks that the
     response status is 200 and the returned data matches the created review's data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     place_id = create_place()
     user_id = create_user()
     new_review = {
@@ -176,7 +194,7 @@ def test_get_review():
         "comment": "Great place to stay!",
         "rating": 5.0,
     }
-    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review)
+    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -203,6 +221,9 @@ def test_put_review():
     Creates a new review, then sends a PUT request to /reviews/{id} with updated review data
     and checks that the response status is 200 and the returned data matches the updated data.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     place_id = create_place()
     user_id = create_user()
     new_review = {
@@ -210,7 +231,7 @@ def test_put_review():
         "comment": "Nice place!",
         "rating": 4.0,
     }
-    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review)
+    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -243,6 +264,9 @@ def test_delete_review():
     Creates a new review, then sends a DELETE request to /reviews/{id} and checks that the
     response status is 204 indicating successful deletion.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     place_id = create_place()
     user_id = create_user()
     new_review = {
@@ -250,7 +274,7 @@ def test_delete_review():
         "comment": "Decent place.",
         "rating": 3.5,
     }
-    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review)
+    response = requests.post(f"{API_URL}/places/{place_id}/reviews", json=new_review, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"

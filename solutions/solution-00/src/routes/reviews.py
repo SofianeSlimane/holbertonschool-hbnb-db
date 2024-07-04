@@ -32,10 +32,10 @@ reviews_bp = Blueprint("reviews", __name__)
 
 @reviews_bp.route("/places/<place_id>/reviews", methods=['POST'])
 @jwt_required()
-def post_review():
+def post_review(place_id):
     current_user = get_jwt_identity()
     if current_user:
-        return create_review
+        return create_review(place_id)
     else:
         return "Unauthorized", 401
     
@@ -43,10 +43,10 @@ def post_review():
 
 @reviews_bp.route("/places/<place_id>/reviews")
 @jwt_required()
-def retrieves_review_from_place():
+def retrieves_review_from_place(place_id):
     current_user = get_jwt_identity()
     if current_user:
-        return get_reviews_from_place
+        return get_reviews_from_place(place_id)
     else:
         return "Unauthorized", 401
     
@@ -54,10 +54,10 @@ def retrieves_review_from_place():
 
 @reviews_bp.route("/users/<user_id>/reviews")
 @jwt_required()
-def retrieves_user_review():
+def retrieves_user_review(user_id):
     current_user = get_jwt_identity()
     if current_user:
-        return get_reviews_from_user
+        return get_reviews_from_user(user_id)
     else:
         return "Unauthorized", 401
     
@@ -69,7 +69,7 @@ def retrieves_user_review():
 def retrieves_reviews():
     current_user = get_jwt_identity()
     if current_user:
-        return get_reviews
+        return get_reviews()
 
     else:
         return "Unauthorized", 401
@@ -79,7 +79,7 @@ def retrieves_reviews():
 def retrieves_review_by_id():
     current_user = get_jwt_identity()
     if current_user:
-        return get_review_by_id
+        return get_review_by_id()
 
     else:
         return "Unauthorized", 401
@@ -88,10 +88,10 @@ def retrieves_review_by_id():
 
 @reviews_bp.route("/reviews/<review_id>", methods=["PUT"])
 @jwt_required()
-def modify_review():
+def modify_review(review_id):
     current_user = get_jwt_identity()
     if current_user:
-        return update_review
+        return update_review(review_id)
 
     else:
         return "Unauthorized", 401
@@ -101,10 +101,10 @@ def modify_review():
 
 @reviews_bp.route("/reviews/<review_id>", methods=["DELETE"])
 @jwt_required()
-def remove_review():
+def remove_review(review_id):
     current_user = get_jwt_identity()
     if current_user:
-         return delete_review
+         return delete_review(review_id)
 
     else:
         return "Unauthorized", 401

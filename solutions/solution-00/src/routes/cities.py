@@ -29,7 +29,7 @@ cities_bp = Blueprint("cities", __name__, url_prefix="/cities")
 def all_cities():
     current_user = get_jwt_identity()
     if current_user:
-        return get_cities
+        return get_cities()
     else:
         return "Unauthorized", 401
     
@@ -39,37 +39,37 @@ def all_cities():
 def post_city():
     current_user = get_jwt_identity()
     if current_user:
-        return create_city
+        return create_city()
     else:
         return "Unauthorized", 401
     
 
 @cities_bp.route('/<city_id>', methods=['GET'])
 @jwt_required()
-def retrieves_citys():
+def retrieves_citys(city_id):
     current_user = get_jwt_identity()
     if current_user:
-        return get_city_by_id
+        return get_city_by_id(city_id)
     else:
         return "Unauthorized", 401
     
 
 @cities_bp.route('/<city_id>', methods=['PUT'])
 @jwt_required()
-def modify_city():
+def modify_city(city_id):
     current_user = get_jwt_identity()
     if current_user:
-        return update_city
+        return update_city(city_id)
     else:
         return "Unauthorized", 401
     
 
 @cities_bp.route('/<city_id>', methods=['DELETE'])
 @jwt_required()
-def remove_city():
+def remove_city(city_id):
     current_user = get_jwt_identity()
     if current_user:
-        return delete_city
+        return delete_city(city_id)
     else:
         return "Unauthorized", 401
     
