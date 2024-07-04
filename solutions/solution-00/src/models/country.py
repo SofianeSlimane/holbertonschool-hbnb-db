@@ -16,17 +16,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 class Country(Base):
 
-    """
-    Country representation
-
-    This class inherits from Base for SQLAlchemy integration
-
-    This class is used to get and list countries
-    """
+    
     __tablename__ = "countries"  
     code: Mapped[str] = mapped_column(db.String, primary_key=True, default='Unknown')
     name: Mapped[str] = mapped_column(db.String, primary_key=True)
-    #id: Mapped[str] = mapped_column(db.String, primary_key=True)
 
     def __init__(self, name: str, code: str, **kw) -> None:
         """Dummy init"""
@@ -46,15 +39,6 @@ class Country(Base):
             "code": self.code,
         }
 
-    #@classmethod
-    #def get_all(cls) -> List["Country"]:
-        #"""Get all countries"""
-        #from src.persistence import repo  # Import repo locally to avoid circular imports
-
-        #countries: list["Country"] = repo.get_all(cls.__name__.lower())  # Get all countries from repository
-
-        #return countries  # Return list of Country objects
-
     @classmethod
     def get(cls, code: str) -> Optional["Country"]:
         """Get a country by its code"""
@@ -66,4 +50,4 @@ class Country(Base):
     @abstractmethod
     def update(self):
         """Abstract method to update the country"""
-        pass  # This method should be implemented by subclasses
+        pass

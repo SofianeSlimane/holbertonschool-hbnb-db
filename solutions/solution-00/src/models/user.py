@@ -58,12 +58,6 @@ class User(Base):
     def create(user: dict) -> "User":
         """Create a new user"""
         from src.persistence import repo
-        #users: List[User] = User.get_all()  
-
-        
-        #for u in users:
-            #if u.email == user["email"]:
-                #raise ValueError("User already exists")
 
         new_user = User(**user)  
         new_user.password = User.set_password(new_user, new_user.password)
@@ -93,15 +87,3 @@ class User(Base):
         repo.update(user)  
 
         return user
-
-    #@staticmethod
-    #def get(user_id: str) -> Optional["User"]:
-        #"""Retrieve a user by ID"""
-        #from src.models.base import Base
-        #return Base.get(cls, User, user_id)
-
-    #@staticmethod
-    #def get_all() -> List["User"]:
-        #"""Retrieve all users"""
-        #from src.models.base import Base
-        #return Base.get_all()

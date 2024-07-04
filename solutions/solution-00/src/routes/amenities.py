@@ -16,13 +16,6 @@ from src.controllers.amenities import (
 
 amenities_bp = Blueprint("amenities", __name__, url_prefix="/amenities")
 
-#amenities_bp.route("/", methods=["GET"])(get_amenities)
-#amenities_bp.route("/", methods=["POST"])(create_amenity)
-
-#amenities_bp.route("/<amenity_id>", methods=["GET"])(get_amenity_by_id)
-#amenities_bp.route("/<amenity_id>", methods=["PUT"])(update_amenity)
-#amenities_bp.route("/<amenity_id>", methods=["DELETE"])(delete_amenity)
-
 @amenities_bp.route("/", methods=['GET'])
 @jwt_required()
 def all_amenities():

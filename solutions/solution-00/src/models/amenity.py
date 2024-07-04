@@ -22,7 +22,6 @@ class Amenity(Base):
     
     def __init__(self, data: 'dict | None' = 'None', **kw) -> None:
         """Dummy init"""
-        #super().__init__(**kw)
 
         if not data:
             return

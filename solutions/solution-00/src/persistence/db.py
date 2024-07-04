@@ -14,10 +14,7 @@
 
 from src.models.base import Base
 from src.persistence.repository import Repository
-from src import get_db, create_app
-from utils.constants import REPOSITORY_ENV_VAR
-from src import create_app
-import os
+from src import get_db
 from src.models.user import User
 from src.models.country import Country
 from utils.populate import populate_db
@@ -25,7 +22,11 @@ from src.models.amenity import Amenity
 from src.models.city import City
 from src.models.place import Place
 from src.models.review import Review
+
+
 db = get_db()
+
+
 class DBRepository(Repository):
     """Dummy DB repository"""
     
@@ -84,11 +85,6 @@ class DBRepository(Repository):
         db.session.add(obj)
         db.session.commit()
         
-
-
-
-
-
     def update(self, obj: Base) -> Base | None:
         """Not implemented"""
         db.session.commit()
