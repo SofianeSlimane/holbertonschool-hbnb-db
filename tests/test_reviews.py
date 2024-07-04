@@ -21,6 +21,7 @@ def create_user():
         "email": unique_email,
         "first_name": "Test",
         "last_name": "User",
+        "password": "passwd"
     }
     response = requests.post(f"{API_URL}/users", json=new_user, headers=authorization_header)
     assert (
@@ -50,6 +51,9 @@ def create_place():
     Helper function to create a new place
     Sends a POST request to /places with new place data and returns the created place's ID.
     """
+    from tests.jwt_func import login_user
+    jwt_token = login_user()
+    authorization_header = {"Authorization": f"Bearer {jwt_token}"}
     user_id = create_user()
     city_code = create_city("UY")
     new_place = {
@@ -65,7 +69,7 @@ def create_place():
         "number_of_bathrooms": 1,
         "max_guests": 4,
     }
-    response = requests.post(f"{API_URL}/places", json=new_place)
+    response = requests.post(f"{API_URL}/places", json=new_place, headers=authorization_header)
     assert (
         response.status_code == 201
     ), f"Expected status code 201 but got {response.status_code}. Response: {response.text}"
@@ -96,7 +100,7 @@ def test_get_reviews_from_place():
 
     review_id = response.json()["id"]
 
-    response = requests.get(f"{API_URL}/places/{place_id}/reviews")
+    response = requests.get(f"{API_URL}/places/{place_id}/reviews", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -133,7 +137,7 @@ def test_get_reviews_from_user():
 
     review_id = response.json()["id"]
 
-    response = requests.get(f"{API_URL}/users/{user_id}/reviews")
+    response = requests.get(f"{API_URL}/users/{user_id}/reviews", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -201,7 +205,7 @@ def test_get_review():
     review_id = response.json()["id"]
 
     # Retrieve the newly created review
-    response = requests.get(f"{API_URL}/reviews/{review_id}")
+    response = requests.get(f"{API_URL}/reviews/{review_id}", headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -244,7 +248,7 @@ def test_put_review():
         "comment": "Amazing place, had a great time!",
         "rating": 4.8,
     }
-    response = requests.put(f"{API_URL}/reviews/{review_id}", json=updated_review)
+    response = requests.put(f"{API_URL}/reviews/{review_id}", json=updated_review, headers=authorization_header)
     assert (
         response.status_code == 200
     ), f"Expected status code 200 but got {response.status_code}. Response: {response.text}"
@@ -281,7 +285,7 @@ def test_delete_review():
     review_id = response.json()["id"]
 
     # Delete the newly created review
-    response = requests.delete(f"{API_URL}/reviews/{review_id}")
+    response = requests.delete(f"{API_URL}/reviews/{review_id}", headers=authorization_header)
     assert (
         response.status_code == 204
     ), f"Expected status code 204 but got {response.status_code}. Response: {response.text}"

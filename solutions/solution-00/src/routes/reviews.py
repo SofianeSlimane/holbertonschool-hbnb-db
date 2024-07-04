@@ -76,10 +76,10 @@ def retrieves_reviews():
     
 @reviews_bp.route("/reviews/<review_id>", methods=["GET"])
 @jwt_required()
-def retrieves_review_by_id():
+def retrieves_review_by_id(review_id):
     current_user = get_jwt_identity()
     if current_user:
-        return get_review_by_id()
+        return get_review_by_id(review_id)
 
     else:
         return "Unauthorized", 401
