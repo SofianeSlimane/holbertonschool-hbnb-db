@@ -4,10 +4,16 @@ Users controller module
 
 from flask import abort, request
 from src.models.user import User
-
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+from flask import Flask, jsonify, request
 
 def get_users():
     """Returns all users"""
+    
     users: list[User] = User.get_all()
 
     return [user.to_dict() for user in users]

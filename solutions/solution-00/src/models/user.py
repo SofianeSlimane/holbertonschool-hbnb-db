@@ -3,55 +3,35 @@ User related functionality
 """
 
 from src.models.base import Base
-<<<<<<< HEAD
+from typing import Optional, Union, List, Any
+from flask_bcrypt import Bcrypt
+from sqlalchemy.orm import Mapped, mapped_column
 from src import get_db
-from datetime import datetime
+import datetime
 import uuid
 db = get_db()
-=======
-from sqlalchemy import Column, String, Boolean, DateTime, func
-from typing import Optional, Union, List, Any
-
->>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
-
+bcrypt = Bcrypt()
 class User(Base):
     """User representation"""
-
-<<<<<<< HEAD
-    email = db.Column(db.String(58), unique=True)
-    first_name = db.Column(db.String(58), unique=True)
-    last_name = db.Column(db.String(58), unique=True)
-    id = db.Column(db.String(58), primary_key=True)
-    def __init__(self, email: str, first_name: str, last_name: str, **kw):
-        """Dummy init"""
+    __tablename__ = "users"  
+    
+    first_name: Mapped[str] = mapped_column(db.String, nullable=False)  
+    last_name: Mapped[str] = mapped_column(db.String, nullable=False)
+    email: Mapped[str] = mapped_column(db.String, nullable=False)
+    password: Mapped[str] = mapped_column(db.String, nullable=True)
+    is_admin: Mapped[bool] = mapped_column(db.String, nullable=False)
+    id: Mapped[str] = mapped_column(db.String, primary_key=True)
+    def __init__(self, email: str, password: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw):
+        """Initialize a new User"""
         self.email = email
+        self.password = password
         self.first_name = first_name
         self.last_name = last_name
-        self.created_at = str(datetime.now)
-        self.update_at = str(datetime.now)
+        self.created_at = datetime.datetime.now()
+        self.updated_at = datetime.datetime.now()
         self.id = str(uuid.uuid4())
-=======
-    __tablename__ = "users"  # Define the name of the table associated with this model
+        self.is_admin = False
 
-    # Defining columns with SQLAlchemy
-    id = Column(String(36), primary_key=True)  # Unique identifier
-    first_name = Column(String(50), nullable=True)  # User's first name
-    last_name = Column(String(50), nullable=True)  # User's last name
-    email = Column(String(120), unique=True, nullable=False)  # Unique email address
-    password = Column(String(128), nullable=False)  # User password
-    is_admin = Column(Boolean, default=False)  # Indicator if user is admin
-    created_at = Column(DateTime, default=func.current_timestamp())  # creation date and time
-    updated_at = Column(DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp())  # date and time of update
-
-    def __init__(self, email: str, password: str, first_name: Optional[str] = None, last_name: Optional[str] = None, **kw):
-        """Initialize a new User"""
-        super().__init__(**kw)  # Calling the parent class constructor
-        self.email = email  # Email initialization
-        self.password = password  # Initialize password
-        self.first_name = first_name  # First name initialization
-        self.last_name = last_name  # Surname initialization
-
->>>>>>> 0f7f5518d67686a3922df33462ac7d941d5fe995
     def __repr__(self) -> str:
         """String representation of the User object"""
         return f"<User {self.id} ({self.email})>"
@@ -59,28 +39,35 @@ class User(Base):
     def to_dict(self) -> dict:
         """Dictionary representation of the object"""
         return {
-            "id": self.id,
+            "id": str(self.id),
             "email": self.email,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "created_at": str(self.created_at),
+            "updated_at": str(self.updated_at),
+            "password": self.password
         }
+    def set_password(self, password):
+         return bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def check_password(self, password):
+        user_check_pw = User.get(self.id)
+        return bcrypt.check_password_hash(user_check_pw.password, password)
 
     @staticmethod
     def create(user: dict) -> "User":
         """Create a new user"""
         from src.persistence import repo
-        users: List[User] = User.get_all()  # Retrieve all existing users
+        #users: List[User] = User.get_all()  
 
-        # Check if the user already exists
-        for u in users:
-            if u.email == user["email"]:
-                raise ValueError("User already exists")
+        
+        #for u in users:
+            #if u.email == user["email"]:
+                #raise ValueError("User already exists")
 
-        new_user = User(**user)  # Create a new user
-
-        repo.save(new_user)  # Save the new user in the repository
+        new_user = User(**user)  
+        new_user.password = User.set_password(new_user, new_user.password)
+        repo.save(new_user) 
 
         return new_user
 
@@ -89,12 +76,11 @@ class User(Base):
         """Update an existing user"""
         from src.persistence import repo
 
-        user: Optional[User] = User.get(user_id)  # Retrieve user by ID
+        user: Optional[User] = User.get(user_id)  
 
         if not user:
-            return None  # Return None if user does not exist
-
-        # Update user fields
+            return None  
+        
         if "email" in data:
             user.email = data["email"]
         if "first_name" in data:
@@ -104,18 +90,18 @@ class User(Base):
         if "password" in data:
             user.password = data["password"]
 
-        repo.update(user)  # Update user in repository
+        repo.update(user)  
 
         return user
 
-    @staticmethod
-    def get(user_id: str) -> Optional["User"]:
-        """Retrieve a user by ID"""
-        from src.models.base import Base
-        return Base.get(user_id)
+    #@staticmethod
+    #def get(user_id: str) -> Optional["User"]:
+        #"""Retrieve a user by ID"""
+        #from src.models.base import Base
+        #return Base.get(cls, User, user_id)
 
-    @staticmethod
-    def get_all() -> List["User"]:
-        """Retrieve all users"""
-        from src.models.base import Base
-        return Base.get_all()
+    #@staticmethod
+    #def get_all() -> List["User"]:
+        #"""Retrieve all users"""
+        #from src.models.base import Base
+        #return Base.get_all()
